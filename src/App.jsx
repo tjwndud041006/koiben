@@ -19,7 +19,12 @@ import {
     Sparkles,
     Crown,
     Users,
-    X
+    X,
+    RefreshCw,
+    ThumbsUp,
+    Trophy,
+    Mic,
+    Volume2
 } from 'lucide-react';
 
 // Import assets
@@ -28,6 +33,12 @@ import bgSchool from './background_school.png';
 import bgVillage from './background_village.png';
 import bgCafe from './background_cafe.png';
 import bgTraining from './background_trainingcenter.png';
+import bgEnding1 from './background_ending1.png';
+import bgEnding2 from './background_ending2.png';
+import bgEnding3 from './background_ending3.png';
+import bgBadEnding1 from './background_badending1.png';
+import bgBadEnding2 from './background_badending2.png';
+import bgBadEnding3 from './background_badending3.png';
 import boyImg from './boy.png';
 import boyTrainingImg from './boy_training.png';
 import girl1Img from './girl1.png';
@@ -1577,7 +1588,119 @@ const endings = {
     }
 };
 
-export { storyData, endings };
+// Sad Endings (rejection based on low affection)
+const sadEndings = {
+    girl1: {
+        girl: 'girl1',
+        dialogues: [
+            {
+                speaker: 'girl1',
+                text: '에...? 고, 고백...?',
+                textJp: 'え...？こ、告白...？'
+            },
+            {
+                speaker: 'girl1',
+                text: '...미안해. 솔직히 말할게.',
+                textJp: '...ごめんね。正直に言うね。'
+            },
+            {
+                speaker: 'girl1',
+                text: '나... 아직 너를 그렇게 생각해본 적이 없어.',
+                textJp: '私...まだあなたのことをそういう風に考えたことがないの。'
+            },
+            {
+                speaker: 'girl1',
+                text: '우리 더 많이 알아가는 게 먼저 아닐까?',
+                textJp: '私たち、もっとお互いを知ることが先じゃないかな？'
+            },
+            {
+                speaker: 'girl1',
+                text: '...친구로서는 좋아해. 정말이야.',
+                textJp: '...友達としては好きだよ。本当だよ。'
+            },
+            {
+                speaker: 'ending',
+                text: '💔 BAD ENDING 💔',
+                subtitle: '아직 때가 아니었던 것 같아... - まだ早すぎた',
+                isSad: true
+            },
+        ]
+    },
+    girl2: {
+        girl: 'girl2',
+        dialogues: [
+            {
+                speaker: 'girl2',
+                text: '...그런 말씀을 해주시다니.',
+                textJp: '...そんなことをおっしゃるなんて。'
+            },
+            {
+                speaker: 'girl2',
+                text: '정말 죄송해요. 저는...',
+                textJp: '本当に申し訳ありません。私は...'
+            },
+            {
+                speaker: 'girl2',
+                text: '아직 당신을 잘 모르는 것 같아요.',
+                textJp: 'まだあなたのことをよく知らないと思います。'
+            },
+            {
+                speaker: 'girl2',
+                text: '마음을 전해주셔서 감사해요. 하지만...',
+                textJp: '気持ちを伝えてくださってありがとうございます。でも...'
+            },
+            {
+                speaker: 'girl2',
+                text: '지금은 받아들일 수 없어요. 죄송해요.',
+                textJp: '今は受け入れることができません。ごめんなさい。'
+            },
+            {
+                speaker: 'ending',
+                text: '💔 BAD ENDING 💔',
+                subtitle: '마음이 닿지 않았어... - 届かなかった想い',
+                isSad: true
+            },
+        ]
+    },
+    girl3: {
+        girl: 'girl3',
+        dialogues: [
+            {
+                speaker: 'girl3',
+                text: '...하? 뭐야 갑자기.',
+                textJp: '...は？何いきなり。'
+            },
+            {
+                speaker: 'girl3',
+                text: '...솔직히 말할게. 별로 관심 없었어.',
+                textJp: '...正直に言うね。あんまり興味なかったし。'
+            },
+            {
+                speaker: 'girl3',
+                text: '나한테 뭘 해준 것도 없잖아.',
+                textJp: '私に何してくれたわけでもないじゃん。'
+            },
+            {
+                speaker: 'girl3',
+                text: '...미안. 그냥 친구로 지내자.',
+                textJp: '...ごめん。ただの友達でいよう。'
+            },
+            {
+                speaker: 'girl3',
+                text: '다음에 더 노력해. ...바보.',
+                textJp: '次はもっと頑張れ。...バカ。'
+            },
+            {
+                speaker: 'ending',
+                text: '💔 BAD ENDING 💔',
+                subtitle: '마음을 열지 못했어... - 開かなかった心',
+                isSad: true
+            },
+        ]
+    }
+};
+
+export { storyData, endings, sadEndings };
 
 // Main App Component
 export default function KoibenApp() {
@@ -1958,14 +2081,16 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
     const [quizAnswer, setQuizAnswer] = useState(null);
     const [textRevealed, setTextRevealed] = useState(false);
     const [inEnding, setInEnding] = useState(false);
+    const [isSadEnding, setIsSadEnding] = useState(false);
     const [autoPlay, setAutoPlay] = useState(false);
     const [stageAffection, setStageAffection] = useState({ girl1: 0, girl2: 0, girl3: 0 });
 
     const stageKey = `stage${currentStage}`;
     const stage = storyData[stageKey];
 
+    // Choose ending dialogues based on happy/sad ending
     const currentDialogues = inEnding && selectedEnding
-        ? endings[selectedEnding].dialogues
+        ? (isSadEnding ? sadEndings[selectedEnding].dialogues : endings[selectedEnding].dialogues)
         : stage?.dialogues || [];
     const currentDialogue = currentDialogues[dialogueIndex];
     const currentGirl = inEnding && selectedEnding
@@ -2031,8 +2156,30 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
 
     const handleFinalChoice = (index) => {
         const choices = ['girl1', 'girl2', 'girl3'];
-        setSelectedEnding(choices[index]);
-        handleNext();
+        const chosenGirl = choices[index];
+        const girlAffection = affection[chosenGirl] || 0;
+
+        // Option 3: Affection-based ending determination
+        // 80%+ = guaranteed happy ending
+        // Below 30% = guaranteed sad ending
+        // 30-80% = probability based on affection
+        let isHappyEnding = true;
+
+        if (girlAffection >= 80) {
+            isHappyEnding = true;
+        } else if (girlAffection < 30) {
+            isHappyEnding = false;
+        } else {
+            // 30-80%: Calculate probability
+            // affection 30 = 0% chance, affection 80 = 100% chance
+            const probability = (girlAffection - 30) / 50; // 0.0 to 1.0
+            isHappyEnding = Math.random() < probability;
+        }
+
+        setSelectedEnding(chosenGirl);
+        setIsSadEnding(!isHappyEnding);
+        setInEnding(true);
+        setDialogueIndex(0);
     };
 
     if (!currentDialogue) {
@@ -2051,27 +2198,80 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
 
     // Ending screen
     if (currentDialogue.speaker === 'ending') {
+        // Select ending background based on character and ending type
+        const endingBackground = isSadEnding
+            ? (selectedEnding === 'girl1' ? bgBadEnding1
+                : selectedEnding === 'girl2' ? bgBadEnding2
+                    : bgBadEnding3)
+            : (selectedEnding === 'girl1' ? bgEnding1
+                : selectedEnding === 'girl2' ? bgEnding2
+                    : bgEnding3);
+
+        // Colors change based on happy/sad ending
+        const endingColor = isSadEnding ? 'gray' : (
+            selectedEnding === 'girl1' ? 'pink'
+                : selectedEnding === 'girl2' ? 'purple'
+                    : 'amber'
+        );
+
+        const gradientColors = isSadEnding
+            ? 'from-gray-500 to-slate-600'
+            : (selectedEnding === 'girl1'
+                ? 'from-pink-500 to-rose-500'
+                : selectedEnding === 'girl2'
+                    ? 'from-purple-500 to-indigo-500'
+                    : 'from-amber-500 to-orange-500');
+
         return (
-            <div className="h-screen flex items-center justify-center relative">
+            <div className="h-screen flex items-center justify-center relative overflow-hidden">
+                {/* Background */}
                 <div
                     className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: `url(${selectedEnding === 'girl1' ? bgSchool : bgVillage})` }}
+                    style={{ backgroundImage: `url(${endingBackground})` }}
                 >
-                    <div className="absolute inset-0 bg-slate-900/70" />
+                    <div className={`absolute inset-0 ${isSadEnding ? 'bg-slate-900/70' : 'bg-gradient-to-t from-slate-900/80 via-transparent to-transparent'}`} />
                 </div>
-                <div className="relative z-10 text-center">
-                    <img
-                        src={characters[selectedEnding].image}
-                        alt="Ending"
-                        className="w-48 h-64 object-cover rounded-2xl mx-auto mb-8 shadow-2xl border-4 border-pink-400/50"
-                    />
-                    <h1 className="text-4xl font-bold text-white mb-4">{currentDialogue.text}</h1>
-                    <p className="text-xl text-pink-300 mb-8">{currentDialogue.subtitle}</p>
+
+                {/* Ending Card - Bottom Center */}
+                <div className={`relative z-20 text-center backdrop-blur-lg rounded-3xl p-8 border max-w-md mx-4 shadow-2xl ${isSadEnding ? 'bg-slate-800/50 border-gray-500/30' : 'bg-white/15 border-white/30'}`}>
+                    {/* Icon */}
+                    {isSadEnding ? (
+                        <Heart className="w-10 h-10 text-gray-400 mx-auto mb-3" />
+                    ) : (
+                        <Sparkles className={`w-10 h-10 text-${endingColor}-400 mx-auto mb-3 animate-pulse`} />
+                    )}
+
+                    {/* Title */}
+                    <h1 className={`text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${gradientColors} mb-3`}>
+                        {currentDialogue.text}
+                    </h1>
+
+                    {/* Subtitle */}
+                    <p className={`text-lg mb-6 leading-relaxed ${isSadEnding ? 'text-gray-400' : 'text-gray-200'}`}>
+                        {currentDialogue.subtitle}
+                    </p>
+
+                    {/* Character badge */}
+                    <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 ${isSadEnding ? 'bg-gray-500/20 border border-gray-400/30' : `bg-${endingColor}-500/20 border border-${endingColor}-400/50`}`}>
+                        {isSadEnding ? (
+                            <>
+                                <X className="w-5 h-5 text-gray-400" />
+                                <span className="text-gray-400 font-medium">다음에는 더 노력해보자...</span>
+                            </>
+                        ) : (
+                            <>
+                                <Heart className={`w-5 h-5 text-${endingColor}-400 fill-${endingColor}-400`} />
+                                <span className={`text-${endingColor}-400 font-medium`}>{characters[selectedEnding].name}와 함께한 추억</span>
+                            </>
+                        )}
+                    </div>
+
+                    {/* Back button */}
                     <button
                         onClick={onBack}
-                        className="px-8 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-full"
+                        className={`w-full px-8 py-4 bg-gradient-to-r ${gradientColors} text-white rounded-full text-lg font-bold shadow-lg hover:scale-105 transition-transform flex items-center justify-center gap-2`}
                     >
-                        메인으로 돌아가기
+                        <Home className="w-5 h-5" /> 메인으로 돌아가기
                     </button>
                 </div>
             </div>
@@ -2351,18 +2551,33 @@ function TrainingMode({ learnedWords, setLearnedWords, wrongWords, setWrongWords
 
     // Hiragana/Katakana Chart View
     const ChartView = ({ data, title, color }) => (
-        <div className="min-h-screen p-4 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-            <button onClick={() => setTab('select')} className="flex items-center gap-2 text-gray-400 hover:text-white mb-4">
-                <ArrowLeft className="w-5 h-5" /> 돌아가기
-            </button>
-            <h1 className={`text-2xl font-bold text-${color}-400 text-center mb-4`}>{title}</h1>
-            <div className="grid grid-cols-5 gap-2 max-w-lg mx-auto">
-                {data.map((item, idx) => (
-                    <div key={idx} className={`bg-slate-800/80 rounded-lg p-3 text-center border border-${color}-400/30 hover:border-${color}-400 transition-all`}>
-                        <div className="text-2xl font-bold text-white">{item.char}</div>
-                        <div className={`text-xs text-${color}-400`}>{item.romaji}</div>
+        <div className="min-h-screen relative">
+            {/* Background */}
+            <div
+                className="absolute inset-0 bg-cover bg-center"
+                style={{ backgroundImage: `url(${bgTraining})` }}
+            >
+                <div className="absolute inset-0 bg-slate-900/70" />
+            </div>
+
+            <div className="relative z-10 p-4">
+                <button onClick={() => setTab('select')} className="flex items-center gap-2 text-gray-300 hover:text-white mb-4 bg-white/10 backdrop-blur px-4 py-2 rounded-full border border-white/20">
+                    <ArrowLeft className="w-5 h-5" /> 돌아가기
+                </button>
+                <div className="text-center mb-6">
+                    <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-${color}-500/20 border border-${color}-400/30 mb-2`}>
+                        <BookOpen className={`w-5 h-5 text-${color}-400`} />
+                        <span className={`text-${color}-400 font-bold text-xl`}>{title}</span>
                     </div>
-                ))}
+                </div>
+                <div className="grid grid-cols-5 gap-3 max-w-lg mx-auto">
+                    {data.map((item, idx) => (
+                        <div key={idx} className={`bg-white/10 backdrop-blur rounded-xl p-3 text-center border border-white/20 hover:bg-white/20 hover:border-${color}-400/50 transition-all`}>
+                            <div className="text-2xl font-bold text-white">{item.char}</div>
+                            <div className={`text-xs text-${color}-400`}>{item.romaji}</div>
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
     );
@@ -2370,15 +2585,61 @@ function TrainingMode({ learnedWords, setLearnedWords, wrongWords, setWrongWords
     // Quiz View
     if (tab === 'quiz') {
         if (showResult) {
+            const resultColor = quizType === 'hiragana' ? 'pink' : quizType === 'katakana' ? 'purple' : 'amber';
+            const resultGradient = quizType === 'hiragana' ? 'from-pink-500 to-rose-500'
+                : quizType === 'katakana' ? 'from-purple-500 to-indigo-500'
+                    : 'from-amber-500 to-orange-500';
+            const percentScore = Math.round((score / quiz.length) * 100);
+
             return (
-                <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-                    <div className="bg-slate-800/80 rounded-2xl p-8 text-center max-w-md w-full border border-slate-700">
-                        <Star className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
-                        <h2 className="text-2xl font-bold text-white mb-2">퀴즈 완료!</h2>
-                        <div className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400 mb-6">{score}/{quiz.length}</div>
-                        <div className="space-y-3">
-                            <button onClick={() => startQuiz(quizType)} className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full">다시 도전</button>
-                            <button onClick={() => setTab('select')} className="w-full py-3 bg-slate-700 text-gray-300 rounded-full">돌아가기</button>
+                <div className="min-h-screen relative">
+                    {/* Background */}
+                    <div
+                        className="absolute inset-0 bg-cover bg-center"
+                        style={{ backgroundImage: `url(${bgTraining})` }}
+                    >
+                        <div className="absolute inset-0 bg-slate-900/70" />
+                    </div>
+
+                    <div className="relative z-10 min-h-screen flex items-center justify-center p-6">
+                        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 text-center max-w-md w-full border border-white/20 shadow-2xl">
+                            {/* Score Icon */}
+                            {percentScore >= 80 ? (
+                                <Crown className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
+                            ) : percentScore >= 50 ? (
+                                <Star className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
+                            ) : (
+                                <BookOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                            )}
+
+                            <h2 className="text-2xl font-bold text-white mb-2">퀴즈 완료!</h2>
+                            <div className={`text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${resultGradient} mb-2`}>
+                                {score}/{quiz.length}
+                            </div>
+                            <p className="text-gray-400 mb-6 flex items-center justify-center gap-2">
+                                {percentScore >= 80 ? (
+                                    <><Trophy className="w-5 h-5 text-yellow-400" /> 훌륭해요!</>
+                                ) : percentScore >= 50 ? (
+                                    <><ThumbsUp className="w-5 h-5 text-green-400" /> 잘했어요!</>
+                                ) : (
+                                    <><Star className="w-5 h-5 text-gray-400" /> 다시 도전해봐요!</>
+                                )}
+                            </p>
+
+                            <div className="space-y-3">
+                                <button
+                                    onClick={() => startQuiz(quizType)}
+                                    className={`w-full py-3 bg-gradient-to-r ${resultGradient} text-white rounded-full font-bold hover:scale-105 transition-transform flex items-center justify-center gap-2`}
+                                >
+                                    <RefreshCw className="w-5 h-5" /> 다시 도전
+                                </button>
+                                <button
+                                    onClick={() => setTab('select')}
+                                    className="w-full py-3 bg-white/10 backdrop-blur text-gray-300 rounded-full border border-white/20 hover:bg-white/20 transition-all"
+                                >
+                                    ← 돌아가기
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2386,31 +2647,91 @@ function TrainingMode({ learnedWords, setLearnedWords, wrongWords, setWrongWords
         }
 
         const currentQ = quiz[currentQuestion];
+        const quizColor = quizType === 'hiragana' ? 'pink' : quizType === 'katakana' ? 'purple' : 'amber';
+
         return (
-            <div className="min-h-screen p-6 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-                <div className="mb-8">
-                    <div className="flex justify-between text-sm text-gray-400 mb-2">
-                        <span>{currentQuestion + 1} / {quiz.length}</span>
-                        <span>점수: {score}</span>
-                    </div>
-                    <div className="w-full h-1.5 bg-slate-700 rounded-full overflow-hidden">
-                        <div className="h-full bg-gradient-to-r from-purple-500 to-pink-500" style={{ width: `${((currentQuestion + 1) / quiz.length) * 100}%` }} />
-                    </div>
+            <div className="min-h-screen relative">
+                {/* Background */}
+                <div
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{ backgroundImage: `url(${bgTraining})` }}
+                >
+                    <div className="absolute inset-0 bg-slate-900/70 backdrop-blur-sm" />
                 </div>
-                <div className="bg-slate-800/80 rounded-2xl p-8 text-center mb-8 border border-slate-700">
-                    <p className="text-gray-400 mb-4">{quizType?.includes('vocab') ? '이 뜻의 일본어는?' : '이 글자의 발음은?'}</p>
-                    <div className="text-5xl font-bold text-white">{currentQ?.question}</div>
-                </div>
-                <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
-                    {currentQ?.options.map((option, idx) => (
-                        <button key={idx} onClick={() => handleAnswer(option)} disabled={selectedAnswer !== null}
-                            className={`p-4 rounded-xl text-lg font-bold transition-all ${selectedAnswer !== null
-                                ? option === currentQ.correct ? 'bg-green-500/80 text-white' : selectedAnswer === option ? 'bg-red-500/80 text-white' : 'bg-slate-700/50 text-gray-500'
-                                : 'bg-slate-800 border border-slate-700 text-white hover:border-pink-400/50'
-                                }`}>
-                            {option}
+
+                <div className="relative z-10 min-h-screen p-6 flex flex-col">
+                    {/* Header */}
+                    <div className="flex items-center justify-between mb-6">
+                        <button onClick={() => setTab('select')} className="flex items-center gap-2 text-gray-300 hover:text-white bg-white/10 backdrop-blur px-4 py-2 rounded-full border border-white/20">
+                            <ArrowLeft className="w-4 h-4" /> 그만두기
                         </button>
-                    ))}
+                        <div className="flex items-center gap-4">
+                            <div className="bg-white/10 backdrop-blur px-4 py-2 rounded-full border border-white/20">
+                                <span className="text-gray-300 text-sm">Q. {currentQuestion + 1} / {quiz.length}</span>
+                            </div>
+                            <div className={`bg-${quizColor}-500/20 backdrop-blur px-4 py-2 rounded-full border border-${quizColor}-400/30`}>
+                                <Star className={`w-4 h-4 inline mr-1 text-${quizColor}-400`} />
+                                <span className={`text-${quizColor}-400 text-sm font-medium`}>{score}점</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Progress Bar */}
+                    <div className="mb-8">
+                        <div className="w-full h-2 bg-white/10 backdrop-blur rounded-full overflow-hidden border border-white/10">
+                            <div
+                                className={`h-full bg-gradient-to-r from-${quizColor}-500 to-${quizColor}-400 transition-all duration-500`}
+                                style={{ width: `${((currentQuestion + 1) / quiz.length) * 100}%` }}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Question Card */}
+                    <div className="flex-1 flex flex-col items-center justify-center">
+                        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 text-center mb-8 border border-white/20 shadow-2xl max-w-lg w-full">
+                            <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-${quizColor}-500/20 border border-${quizColor}-400/30 mb-4`}>
+                                <BookOpen className={`w-4 h-4 text-${quizColor}-400`} />
+                                <span className={`text-${quizColor}-400 text-sm`}>
+                                    {quizType?.includes('vocab') ? '단어 퀴즈' : quizType === 'hiragana' ? '히라가나 퀴즈' : '가타카나 퀴즈'}
+                                </span>
+                            </div>
+                            <p className="text-gray-400 mb-4 text-lg">{quizType?.includes('vocab') ? '이 뜻의 일본어는?' : '이 글자의 발음은?'}</p>
+                            <div className="text-5xl font-bold text-white py-4">{currentQ?.question}</div>
+                        </div>
+
+                        {/* Options */}
+                        <div className="grid grid-cols-2 gap-4 max-w-lg w-full">
+                            {currentQ?.options.map((option, idx) => {
+                                const isCorrect = option === currentQ.correct;
+                                const isSelected = selectedAnswer === option;
+                                const showResult = selectedAnswer !== null;
+
+                                let buttonClass = 'bg-white/10 backdrop-blur border-2 border-white/20 text-white hover:bg-white/20 hover:border-white/40';
+                                if (showResult) {
+                                    if (isCorrect) {
+                                        buttonClass = 'bg-green-500/30 border-2 border-green-400 text-green-400';
+                                    } else if (isSelected) {
+                                        buttonClass = 'bg-red-500/30 border-2 border-red-400 text-red-400';
+                                    } else {
+                                        buttonClass = 'bg-white/5 border-2 border-white/10 text-gray-500';
+                                    }
+                                }
+
+                                return (
+                                    <button
+                                        key={idx}
+                                        onClick={() => handleAnswer(option)}
+                                        disabled={selectedAnswer !== null}
+                                        className={`p-5 rounded-2xl text-xl font-bold transition-all transform hover:scale-105 ${buttonClass}`}
+                                    >
+                                        {showResult && isCorrect && <span className="mr-2">✓</span>}
+                                        {showResult && isSelected && !isCorrect && <span className="mr-2">✗</span>}
+                                        {option}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
                 </div>
             </div>
         );
@@ -2418,6 +2739,203 @@ function TrainingMode({ learnedWords, setLearnedWords, wrongWords, setWrongWords
 
     if (tab === 'hiragana-chart') return <ChartView data={hiraganaData} title="히라가나 표" color="pink" />;
     if (tab === 'katakana-chart') return <ChartView data={katakanaData} title="가타카나 표" color="purple" />;
+
+    // Pronunciation Practice View
+    if (tab === 'pronunciation') {
+        const practiceWords = [
+            { japanese: 'おはよう', romaji: 'ohayou', meaning: '좋은 아침' },
+            { japanese: 'こんにちは', romaji: 'konnichiwa', meaning: '안녕하세요' },
+            { japanese: 'ありがとう', romaji: 'arigatou', meaning: '고마워요' },
+            { japanese: 'すみません', romaji: 'sumimasen', meaning: '실례합니다' },
+            { japanese: 'おねがいします', romaji: 'onegaishimasu', meaning: '부탁합니다' },
+            { japanese: 'だいすき', romaji: 'daisuki', meaning: '너무 좋아' },
+            { japanese: 'かわいい', romaji: 'kawaii', meaning: '귀여워' },
+            { japanese: 'すごい', romaji: 'sugoi', meaning: '대단해' },
+        ];
+
+        const [currentWordIndex, setCurrentWordIndex] = React.useState(0);
+        const [isListening, setIsListening] = React.useState(false);
+        const [userSpeech, setUserSpeech] = React.useState('');
+        const [feedback, setFeedback] = React.useState(null);
+        const [matchScore, setMatchScore] = React.useState(null);
+
+        const currentWord = practiceWords[currentWordIndex];
+
+        const startListening = () => {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                setFeedback({ type: 'error', message: '이 브라우저는 음성인식을 지원하지 않습니다. Chrome을 사용해주세요.' });
+                return;
+            }
+
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+
+            recognition.lang = 'ja-JP';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            setIsListening(true);
+            setUserSpeech('');
+            setFeedback(null);
+            setMatchScore(null);
+
+            recognition.start();
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                setUserSpeech(transcript);
+
+                // Calculate match score
+                const target = currentWord.japanese.toLowerCase();
+                const spoken = transcript.toLowerCase();
+
+                let score = 0;
+                if (spoken === target) {
+                    score = 100;
+                } else if (spoken.includes(target) || target.includes(spoken)) {
+                    score = 80;
+                } else {
+                    // Calculate character overlap
+                    let matches = 0;
+                    for (let char of spoken) {
+                        if (target.includes(char)) matches++;
+                    }
+                    score = Math.min(70, Math.round((matches / target.length) * 70));
+                }
+
+                setMatchScore(score);
+
+                if (score >= 90) {
+                    setFeedback({ type: 'perfect', message: '완벽해요! 🎉 네이티브 발음이에요!' });
+                } else if (score >= 70) {
+                    setFeedback({ type: 'good', message: '잘했어요! 👍 조금만 더 연습하면 완벽해져요!' });
+                } else if (score >= 40) {
+                    setFeedback({ type: 'okay', message: '괜찮아요! 💪 천천히 다시 발음해보세요.' });
+                } else {
+                    setFeedback({ type: 'retry', message: '다시 도전해봐요! 🔄 또박또박 발음해보세요.' });
+                }
+            };
+
+            recognition.onerror = (event) => {
+                setIsListening(false);
+                if (event.error === 'no-speech') {
+                    setFeedback({ type: 'error', message: '음성이 감지되지 않았어요. 다시 시도해주세요.' });
+                } else {
+                    setFeedback({ type: 'error', message: '오류가 발생했어요. 다시 시도해주세요.' });
+                }
+            };
+
+            recognition.onend = () => {
+                setIsListening(false);
+            };
+        };
+
+        const nextWord = () => {
+            setCurrentWordIndex((prev) => (prev + 1) % practiceWords.length);
+            setUserSpeech('');
+            setFeedback(null);
+            setMatchScore(null);
+        };
+
+        return (
+            <div className="min-h-screen relative">
+                {/* Background */}
+                <div
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{ backgroundImage: `url(${bgTraining})` }}
+                >
+                    <div className="absolute inset-0 bg-slate-900/70" />
+                </div>
+
+                <div className="relative z-10 min-h-screen p-6 flex flex-col">
+                    {/* Header */}
+                    <div className="flex items-center justify-between mb-6">
+                        <button onClick={() => setTab('select')} className="flex items-center gap-2 text-gray-300 hover:text-white bg-white/10 backdrop-blur px-4 py-2 rounded-full border border-white/20">
+                            <ArrowLeft className="w-4 h-4" /> 돌아가기
+                        </button>
+                        <div className="bg-emerald-500/20 backdrop-blur px-4 py-2 rounded-full border border-emerald-400/30">
+                            <Mic className="w-4 h-4 inline mr-1 text-emerald-400" />
+                            <span className="text-emerald-400 text-sm font-medium">AI 발음 연습</span>
+                        </div>
+                    </div>
+
+                    {/* Progress */}
+                    <div className="text-center mb-4">
+                        <span className="text-gray-400 text-sm">{currentWordIndex + 1} / {practiceWords.length}</span>
+                    </div>
+
+                    {/* Word Card */}
+                    <div className="flex-1 flex flex-col items-center justify-center">
+                        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 text-center border border-white/20 shadow-2xl max-w-md w-full mb-6">
+                            <div className="text-5xl font-bold text-white mb-4">{currentWord.japanese}</div>
+                            <div className="text-emerald-400 text-lg mb-2">{currentWord.romaji}</div>
+                            <div className="text-gray-400">{currentWord.meaning}</div>
+                        </div>
+
+                        {/* Record Button */}
+                        <button
+                            onClick={startListening}
+                            disabled={isListening}
+                            className={`w-24 h-24 rounded-full flex items-center justify-center transition-all ${isListening
+                                    ? 'bg-red-500 animate-pulse'
+                                    : 'bg-gradient-to-r from-emerald-500 to-teal-500 hover:scale-110'
+                                }`}
+                        >
+                            <Mic className="w-10 h-10 text-white" />
+                        </button>
+                        <p className="text-gray-400 mt-3 text-sm">
+                            {isListening ? '듣고 있어요...' : '버튼을 누르고 발음하세요'}
+                        </p>
+
+                        {/* User Speech Display */}
+                        {userSpeech && (
+                            <div className="mt-6 bg-white/10 backdrop-blur rounded-xl p-4 w-full max-w-md">
+                                <p className="text-gray-400 text-sm mb-1">인식된 발음:</p>
+                                <p className="text-white text-xl font-bold">{userSpeech}</p>
+                                {matchScore !== null && (
+                                    <div className="mt-3">
+                                        <div className="w-full h-2 bg-slate-700 rounded-full overflow-hidden">
+                                            <div
+                                                className={`h-full transition-all duration-500 ${matchScore >= 90 ? 'bg-emerald-500' :
+                                                        matchScore >= 70 ? 'bg-green-500' :
+                                                            matchScore >= 40 ? 'bg-yellow-500' : 'bg-red-500'
+                                                    }`}
+                                                style={{ width: `${matchScore}%` }}
+                                            />
+                                        </div>
+                                        <p className={`text-right text-sm mt-1 ${matchScore >= 90 ? 'text-emerald-400' :
+                                                matchScore >= 70 ? 'text-green-400' :
+                                                    matchScore >= 40 ? 'text-yellow-400' : 'text-red-400'
+                                            }`}>{matchScore}% 일치</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Feedback */}
+                        {feedback && (
+                            <div className={`mt-4 p-4 rounded-xl max-w-md w-full text-center ${feedback.type === 'perfect' ? 'bg-emerald-500/20 border border-emerald-400/50 text-emerald-400' :
+                                    feedback.type === 'good' ? 'bg-green-500/20 border border-green-400/50 text-green-400' :
+                                        feedback.type === 'okay' ? 'bg-yellow-500/20 border border-yellow-400/50 text-yellow-400' :
+                                            feedback.type === 'retry' ? 'bg-orange-500/20 border border-orange-400/50 text-orange-400' :
+                                                'bg-red-500/20 border border-red-400/50 text-red-400'
+                                }`}>
+                                {feedback.message}
+                            </div>
+                        )}
+
+                        {/* Next Button */}
+                        <button
+                            onClick={nextWord}
+                            className="mt-6 px-6 py-3 bg-white/10 backdrop-blur text-white rounded-full border border-white/20 hover:bg-white/20 transition-all flex items-center gap-2"
+                        >
+                            다음 단어 <ChevronRight className="w-4 h-4" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     // Main Select Screen
     return (
@@ -2523,6 +3041,25 @@ function TrainingMode({ learnedWords, setLearnedWords, wrongWords, setWrongWords
                         </div>
                     </div>
 
+                    {/* AI Pronunciation Practice */}
+                    <div className="mb-6">
+                        <h2 className="text-lg font-bold text-white mb-3 flex items-center gap-2"><Mic className="w-5 h-5 text-emerald-400" /> AI 발음 연습</h2>
+                        <button
+                            onClick={() => setTab('pronunciation')}
+                            className="w-full p-4 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 rounded-xl border border-emerald-400/30 hover:border-emerald-400 transition-all text-left"
+                        >
+                            <div className="flex items-center gap-3">
+                                <div className="w-12 h-12 rounded-full bg-emerald-500/30 flex items-center justify-center">
+                                    <Volume2 className="w-6 h-6 text-emerald-400" />
+                                </div>
+                                <div>
+                                    <div className="font-medium text-emerald-400">발음 분석 시작</div>
+                                    <div className="text-xs text-gray-400">AI가 당신의 발음을 분석해드려요</div>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+
                     {energy <= 0 && (
                         <div className="text-center">
                             <button onClick={() => setEnergy(5)} className="px-6 py-3 bg-emerald-500 text-white rounded-full">
@@ -2571,7 +3108,7 @@ function Dictionary({ learnedWords, wrongWords, setWrongWords, onBack }) {
                 {wrongWords.length === 0 ? (
                     <div className="bg-white/10 backdrop-blur rounded-2xl p-8 text-center max-w-md mx-auto border border-white/20">
                         <Star className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
-                        <h2 className="text-xl font-bold text-white mb-2">완벽해요! 🎉</h2>
+                        <h2 className="text-xl font-bold text-white mb-2">완벽해요!</h2>
                         <p className="text-gray-300">틀린 단어가 없어요!<br />트레이닝 센터에서 퀴즈를 풀어보세요.</p>
                     </div>
                 ) : (
