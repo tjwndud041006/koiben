@@ -25,9 +25,13 @@ body {
 /* Mobile-first app container */
 #root {
     max-width: 430px;
+    height: 852px;
+    /* Fixed height for iPhone 14 Pro ratio */
     margin: 0 auto;
     position: relative;
     overflow-x: hidden;
+    overflow-y: hidden;
+    /* Ensure no unwanted scroll on the main container */
 }
 
 /* For larger screens, add border effect */

@@ -24,7 +24,13 @@ import {
     ThumbsUp,
     Trophy,
     Mic,
-    Volume2
+    Volume2,
+    ShoppingBag,
+    Gem,
+    Clock,
+    Shirt,
+    Gift,
+    CreditCard
 } from 'lucide-react';
 
 // Import assets
@@ -189,7 +195,7 @@ const storyData = {
             },
             {
                 speaker: 'narration',
-                text: '???「あの、すみません。新入生の方ですか？ここ、どう行けばいいか分かります？」',
+                text: '???: 「あの、すみません。新入生の方ですか？ここ、どう行けばいいか分かります？」',
             },
             // 퀴즈 1: 첫 일본어 도전
             {
@@ -822,6 +828,12 @@ const storyData = {
                     'どうでもいい',
                     'わからない'
                 ],
+                meanings: [
+                    '시시해',
+                    '대단하네요',
+                    '아무래도 좋아',
+                    '모르겠어'
+                ],
                 correct: 1
             },
             {
@@ -863,6 +875,12 @@ const storyData = {
                     '行きます',
                     '行きました',
                     '行きません'
+                ],
+                meanings: [
+                    '가고 싶어요',
+                    '갑니다',
+                    '갔습니다',
+                    '가지 않습니다'
                 ],
                 correct: 0
             },
@@ -948,6 +966,12 @@ const storyData = {
                     '知りません',
                     '関係ない'
                 ],
+                meanings: [
+                    '저도 그래요',
+                    '그런가요',
+                    '몰라요',
+                    '관계없어요'
+                ],
                 correct: 0
             },
             {
@@ -989,6 +1013,12 @@ const storyData = {
                     '楽しいです',
                     '楽しくないです',
                     '楽しみです'
+                ],
+                meanings: [
+                    '즐거웠어요',
+                    '즐거워요',
+                    '즐겁지 않아요',
+                    '기대돼요'
                 ],
                 correct: 0
             },
@@ -1952,6 +1982,12 @@ export default function KoibenApp() {
                     onBack={() => setCurrentScreen('main')}
                 />
             )}
+
+            {currentScreen === 'store' && (
+                <Store
+                    onBack={() => setCurrentScreen('main')}
+                />
+            )}
         </div>
     );
 }
@@ -2122,7 +2158,7 @@ function MainMenu({ affection, energy, learnedWords, currentStage, onNavigate })
 
             <div className="relative z-10 h-screen flex flex-col p-3 overflow-hidden">
                 {/* Header Stats */}
-                <div className="flex flex-wrap justify-center gap-1 mb-3 mt-4">
+                <div className="flex flex-wrap justify-center gap-2 mb-3 mt-12">
                     <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-pink-500/20 border border-pink-400/30">
                         <Heart className="w-3 h-3 text-pink-400" />
                         <span className="text-pink-400 text-xs font-medium">{characters.girl1.name}: {affection.girl1}%</span>
@@ -2146,7 +2182,7 @@ function MainMenu({ affection, energy, learnedWords, currentStage, onNavigate })
                     {/* Character Display - Boy only (1/3 of screen) */}
                     <div className="flex items-center justify-center mb-2">
                         <div className="text-center">
-                            <img src={boyImg} alt="You" className="h-[200px] w-auto object-contain rounded-xl shadow-xl border-2 border-blue-400/50" />
+                            <img src={boyImg} alt="You" className="h-[270px] w-auto object-contain rounded-xl shadow-xl border-2 border-blue-400/50" />
                         </div>
                     </div>
 
@@ -2189,6 +2225,12 @@ function MainMenu({ affection, energy, learnedWords, currentStage, onNavigate })
                             title="단어장"
                             subtitle={`${learnedWords}개 단어 수집`}
                             onClick={() => onNavigate('dictionary')}
+                        />
+                        <MenuButton
+                            icon={ShoppingBag}
+                            title="상점"
+                            subtitle="아이템 및 패키지 구매"
+                            onClick={() => onNavigate('store')}
                         />
                     </div>
                 </div>
@@ -2288,7 +2330,7 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
             }));
         }
 
-        setTimeout(handleNext, 1200);
+        // Removed setTimeout to allow manual progression
     };
 
     const handleChoice = (index) => {
@@ -2347,7 +2389,7 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
     // Title screen (prologue ending)
     if (currentDialogue.speaker === 'title') {
         return (
-            <div className="h-screen flex flex-col items-center justify-center relative overflow-hidden">
+            <div className="h-screen flex flex-col items-center justify-center relative overflow-hidden animate-[fadeIn_2s_ease-out]">
                 {/* Background */}
                 <div
                     className="absolute inset-0 bg-cover bg-center"
@@ -2425,7 +2467,7 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
                 </div>
 
                 {/* Ending Card - Bottom Wide Rectangle */}
-                <div className="absolute bottom-12 left-0 right-0 px-4 flex justify-center z-20">
+                <div className="absolute bottom-24 left-0 right-0 px-4 flex justify-center z-20">
                     <div className={`w-full max-w-sm backdrop-blur-lg rounded-2xl p-6 border shadow-2xl ${isSadEnding ? 'bg-slate-800/80 border-gray-500/30' : 'bg-white/20 border-white/30'}`}>
                         <div className="flex flex-col items-center text-center">
                             {/* Icon */}
@@ -2509,7 +2551,7 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
             </div>
 
             {/* Characters and Dialogue Flex Container */}
-            <div className="absolute bottom-0 left-0 right-0 z-20 flex flex-col justify-end pointer-events-none">
+            <div className="absolute bottom-8 left-0 right-0 z-20 flex flex-col justify-end pointer-events-none">
 
                 {/* Characters Container */}
                 <div className="flex items-end justify-between px-0 w-full -mb-6 relative z-10">
@@ -2555,27 +2597,43 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
                             {/* Quiz */}
                             {currentDialogue.speaker === 'quiz' && (
                                 <div>
-                                    <div className="text-white text-base mb-4">{currentDialogue.question}</div>
+                                    <div className="text-white text-sm mb-4">{currentDialogue.question}</div>
                                     <div className="grid grid-cols-2 gap-2">
                                         {currentDialogue.options.map((option, idx) => (
                                             <button
                                                 key={idx}
                                                 onClick={() => handleQuizAnswer(idx)}
                                                 disabled={quizAnswer !== null}
-                                                className={`p-3 rounded-lg text-sm font-bold transition-all ${quizAnswer !== null
+                                                className={`p-3 rounded-lg text-sm font-bold transition-all relative overflow-hidden group ${quizAnswer !== null
                                                     ? idx === currentDialogue.correct
                                                         ? 'bg-green-500/80 text-white'
                                                         : 'bg-slate-600/50 text-gray-400'
                                                     : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
                                                     }`}
                                             >
-                                                {option}
+                                                <div className="relative z-10">
+                                                    <div>{option}</div>
+                                                    {/* Show meaning if answered and meaning exists */}
+                                                    {quizAnswer !== null && currentDialogue.meanings && currentDialogue.meanings[idx] && (
+                                                        <div className="text-xs font-normal opacity-80 mt-1 pb-1 pt-1 border-t border-white/20">
+                                                            {currentDialogue.meanings[idx]}
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </button>
                                         ))}
                                     </div>
                                     {quizAnswer && (
-                                        <div className={`mt-3 text-center text-base font-bold ${quizAnswer === 'correct' ? 'text-green-400' : 'text-red-400'}`}>
-                                            {quizAnswer === 'correct' ? '✓ 정답!' : '✗ 아쉬워요...'}
+                                        <div className="mt-3 text-center animate-fadeIn">
+                                            <div className={`text-base font-bold mb-2 ${quizAnswer === 'correct' ? 'text-green-400' : 'text-red-400'}`}>
+                                                {quizAnswer === 'correct' ? '✓ 정답!' : '✗ 아쉬워요...'}
+                                            </div>
+                                            <button
+                                                onClick={handleNext}
+                                                className="px-6 py-2 bg-white/20 hover:bg-white/30 text-white text-sm font-bold rounded-full transition-all border border-white/30 animate-pulse"
+                                            >
+                                                다음으로 ▶
+                                            </button>
                                         </div>
                                     )}
                                 </div>
@@ -3331,6 +3389,248 @@ function Dictionary({ learnedWords, wrongWords, setWrongWords, onBack }) {
                         </div>
                     )}
                 </div>
+            </div>
+        </div>
+    );
+}
+
+function Store({ onBack }) {
+    const [activeTab, setActiveTab] = useState('currency');
+
+    const tabs = [
+        { id: 'currency', label: '재화', icon: Gem },
+        { id: 'study', label: '학습', icon: BookOpen },
+        { id: 'item', label: '아이템', icon: Zap },
+        { id: 'skin', label: '의상', icon: Shirt },
+        { id: 'free', label: '무료', icon: Gift },
+    ];
+
+    const renderContent = () => {
+        switch (activeTab) {
+            case 'currency':
+                return (
+                    <div className="space-y-4 pb-24">
+                        {/* First Purchase Banner */}
+                        <div className="bg-gradient-to-r from-pink-500 to-rose-500 rounded-2xl p-4 shadow-lg mb-6 relative overflow-hidden">
+                            <div className="absolute right-0 top-0 opacity-20 transform translate-x-4 -translate-y-4">
+                                <Gem className="w-32 h-32 text-white" />
+                            </div>
+                            <div className="relative z-10">
+                                <div className="inline-block bg-white/20 px-2 py-1 rounded text-xs text-white font-bold mb-1">첫 구매 한정</div>
+                                <h3 className="text-xl font-bold text-white mb-1">루비 2배 지급!</h3>
+                                <p className="text-white/90 text-sm">첫 충전 시 모든 패키지 1+1 혜택</p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                            {[
+                                { amount: 10, bonus: 0, price: '1,500원' },
+                                { amount: 50, bonus: 5, price: '5,900원', popular: true },
+                                { amount: 100, bonus: 15, price: '12,000원' },
+                                { amount: 300, bonus: 50, price: '33,000원' },
+                                { amount: 500, bonus: 100, price: '55,000원' },
+                                { amount: 1000, bonus: 300, price: '99,000원' },
+                            ].map((item, idx) => (
+                                <div key={idx} className="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-xl p-4 flex flex-col items-center relative overflow-hidden group">
+                                    {item.popular && (
+                                        <div className="absolute top-0 right-0 bg-yellow-500 text-xs font-bold text-slate-900 px-2 py-0.5 rounded-bl-lg">
+                                            POPULAR
+                                        </div>
+                                    )}
+                                    <Gem className="w-8 h-8 text-pink-400 mb-2 group-hover:scale-110 transition-transform" />
+                                    <div className="text-white font-bold text-lg">{item.amount} <span className="text-xs text-pink-400">+{item.bonus}</span></div>
+                                    <button className="mt-3 w-full bg-slate-700 hover:bg-pink-500 hover:text-white transition-colors py-2 rounded-lg text-sm text-gray-300 font-medium">
+                                        {item.price}
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            case 'study':
+                return (
+                    <div className="space-y-4 pb-24">
+                        <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
+                            <CreditCard className="w-5 h-5 text-purple-400" /> 구독 & 멤버십
+                        </h3>
+                        {/* Premium Pass */}
+                        <div className="bg-gradient-to-br from-slate-800 to-slate-900 border border-purple-500/30 rounded-2xl p-5 shadow-lg relative overflow-hidden">
+                            <div className="absolute top-0 right-0 bg-purple-500/20 w-32 h-32 rounded-full blur-2xl -mr-10 -mt-10" />
+                            <div className="relative z-10">
+                                <div className="flex justify-between items-start mb-4">
+                                    <div>
+                                        <h3 className="text-xl font-bold text-white">프리미엄 패스</h3>
+                                        <p className="text-gray-400 text-sm">연간 구독 시 2개월 무료!</p>
+                                    </div>
+                                    <Crown className="w-8 h-8 text-yellow-400" />
+                                </div>
+                                <ul className="space-y-2 mb-6 text-sm text-gray-300">
+                                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-green-400" />모든 광고 제거</li>
+                                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-green-400" />무제한 에너지</li>
+                                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-green-400" />AI 정밀 리프트 해제</li>
+                                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-green-400" />매일 루비 20개 지급</li>
+                                </ul>
+                                <div className="flex gap-3">
+                                    <button className="flex-1 bg-slate-700 py-3 rounded-xl text-gray-300 text-sm font-bold border border-slate-600">월 4,900원</button>
+                                    <button className="flex-1 bg-gradient-to-r from-purple-500 to-indigo-500 py-3 rounded-xl text-white text-sm font-bold shadow-lg shadow-purple-500/20">연 49,000원</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3 className="text-lg font-bold text-white mt-8 mb-2">학습 패키지</h3>
+                        <div className="bg-slate-800/50 rounded-xl p-4 flex items-center gap-4 border border-slate-700">
+                            <div className="w-12 h-12 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400 font-bold text-xl">N3</div>
+                            <div className="flex-1">
+                                <div className="text-white font-bold">JLPT N3 대비 팩</div>
+                                <div className="text-xs text-gray-400">전용 시나리오 + 필수 단어장</div>
+                            </div>
+                            <button className="bg-blue-600/20 text-blue-400 px-4 py-2 rounded-lg text-sm font-bold">12,000원</button>
+                        </div>
+                        <div className="bg-slate-800/50 rounded-xl p-4 flex items-center gap-4 border border-slate-700">
+                            <div className="w-12 h-12 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold text-xl">PDF</div>
+                            <div className="flex-1">
+                                <div className="text-white font-bold">학습 자료 추출권</div>
+                                <div className="text-xs text-gray-400">오답 노트 & 학습 자료 PDF 다운로드</div>
+                            </div>
+                            <button className="bg-emerald-600/20 text-emerald-400 px-4 py-2 rounded-lg text-sm font-bold">5,500원</button>
+                        </div>
+                    </div>
+                );
+            case 'item':
+                return (
+                    <div className="space-y-4 pb-24">
+                        <div className="grid grid-cols-1 gap-3">
+                            {[
+                                { name: '타임 리프', desc: '선택지 실패 시 직전으로 되돌아갑니다.', icon: Clock, color: 'blue', price: '루비 5개' },
+                                { name: '에너지 충전', desc: '스토리 진행에 필요한 에너지를 즉시 회복!', icon: Zap, color: 'yellow', price: '루비 10개' },
+                                { name: '정답 힌트권', desc: '어려운 퀴즈에서 정답을 미리 보여줍니다.', icon: BookOpen, color: 'green', price: '루비 3개' }
+                            ].map((item, idx) => (
+                                <div key={idx} className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 flex items-center gap-4">
+                                    <div className={`w-12 h-12 rounded-full bg-${item.color}-500/20 flex items-center justify-center`}>
+                                        <item.icon className={`w-6 h-6 text-${item.color}-400`} />
+                                    </div>
+                                    <div className="flex-1">
+                                        <div className="text-white font-bold">{item.name}</div>
+                                        <div className="text-xs text-gray-400">{item.desc}</div>
+                                    </div>
+                                    <button className="bg-slate-700 px-4 py-2 rounded-lg text-sm font-bold text-pink-400 flex items-center gap-1">
+                                        <Gem className="w-3 h-3" /> {item.price}
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            case 'skin':
+                return (
+                    <div className="space-y-4 pb-24">
+                        <h3 className="text-lg font-bold text-white mb-2">프리미엄 의상실</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                            {[
+                                { name: '여름 교복', type: 'LIMITED', image: girl1Img },
+                                { name: '사복 데이트', type: 'EPIC', image: girl2Img },
+                                { name: '메이드복', type: 'LEGENDARY', image: girl3Img },
+                                { name: '겨울 코트', type: 'RARE', image: girl1Img },
+                            ].map((skin, idx) => (
+                                <div key={idx} className="bg-slate-800/50 rounded-xl overflow-hidden border border-slate-700 group">
+                                    <div className="aspect-[3/4] bg-slate-900 relative">
+                                        <div className="absolute top-2 left-2 bg-black/60 text-[10px] text-white px-2 py-0.5 rounded backdrop-blur">
+                                            {skin.type}
+                                        </div>
+                                        <img src={skin.image} alt={skin.name} className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity" />
+                                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3 pt-8">
+                                            <div className="text-white font-bold text-sm">{skin.name}</div>
+                                        </div>
+                                    </div>
+                                    <div className="p-3">
+                                        <button className="w-full bg-slate-700 hover:bg-pink-500 py-2 rounded-lg text-xs font-bold text-white transition-colors">
+                                            구매하기
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            case 'free':
+                return (
+                    <div className="space-y-4 pb-24">
+                        <div className="bg-gradient-to-br from-indigo-600 to-blue-600 rounded-2xl p-5 shadow-lg flex items-center justify-between">
+                            <div>
+                                <div className="text-xs text-blue-200 font-bold mb-1">매일매일 리필!</div>
+                                <h3 className="text-xl font-bold text-white mb-2">일일 무료 패키지</h3>
+                                <div className="flex gap-2">
+                                    <span className="bg-black/20 px-2 py-1 rounded text-xs text-white">에너지 +10</span>
+                                    <span className="bg-black/20 px-2 py-1 rounded text-xs text-white">루비 +1</span>
+                                </div>
+                            </div>
+                            <Gift className="w-12 h-12 text-white/90 animate-bounce" />
+                        </div>
+
+                        <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-lg bg-pink-500/20 flex items-center justify-center">
+                                    <PlayCircle className="w-6 h-6 text-pink-400" />
+                                </div>
+                                <div>
+                                    <div className="text-white font-bold">광고 보고 무료 루비</div>
+                                    <div className="text-xs text-gray-400">하루 최대 5회 가능 (0/5)</div>
+                                </div>
+                            </div>
+                            <button className="bg-pink-500 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-lg shadow-pink-500/20">
+                                받기
+                            </button>
+                        </div>
+                    </div>
+                );
+            default:
+                return null;
+        }
+    };
+
+    return (
+        <div className="h-screen bg-slate-900 flex flex-col relative overflow-hidden">
+            {/* Header */}
+            <div className="p-4 flex items-center gap-4 bg-slate-900/50 backdrop-blur z-20">
+                <button
+                    onClick={onBack}
+                    className="p-2 -ml-2 rounded-full hover:bg-slate-800 transition-colors"
+                >
+                    <ArrowLeft className="w-6 h-6 text-white" />
+                </button>
+                <div>
+                    <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                        <ShoppingBag className="w-5 h-5 text-pink-400" /> 상점
+                    </h2>
+                </div>
+                <div className="ml-auto flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-full border border-slate-700">
+                    <Gem className="w-4 h-4 text-pink-400" />
+                    <span className="text-white font-bold text-sm">1,250</span>
+                </div>
+            </div>
+
+            {/* Tab Navigation */}
+            <div className="px-4 pb-2 overflow-x-auto scrollbar-hide">
+                <div className="flex gap-2">
+                    {tabs.map((tab) => (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id)}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all ${activeTab === tab.id
+                                ? 'bg-pink-500 text-white shadow-lg shadow-pink-500/30'
+                                : 'bg-slate-800 text-gray-400 hover:bg-slate-700'
+                                }`}
+                        >
+                            <tab.icon className="w-4 h-4" />
+                            {tab.label}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {/* Content Area */}
+            <div className="flex-1 overflow-y-auto px-4 py-4 scrollbar-hide">
+                {renderContent()}
             </div>
         </div>
     );
