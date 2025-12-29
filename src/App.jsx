@@ -2424,47 +2424,51 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
                     <div className={`absolute inset-0 ${isSadEnding ? 'bg-slate-900/70' : 'bg-gradient-to-t from-slate-900/80 via-transparent to-transparent'}`} />
                 </div>
 
-                {/* Ending Card - Bottom Center - Optimized for Mobile */}
-                <div className={`relative z-20 text-center backdrop-blur-lg rounded-2xl p-6 border max-w-sm mx-4 shadow-xl ${isSadEnding ? 'bg-slate-800/50 border-gray-500/30' : 'bg-white/15 border-white/30'}`}>
-                    {/* Icon */}
-                    {isSadEnding ? (
-                        <Heart className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                    ) : (
-                        <Sparkles className={`w-8 h-8 text-${endingColor}-400 mx-auto mb-2 animate-pulse`} />
-                    )}
+                {/* Ending Card - Bottom Wide Rectangle */}
+                <div className="absolute bottom-12 left-0 right-0 px-4 flex justify-center z-20">
+                    <div className={`w-full max-w-sm backdrop-blur-lg rounded-2xl p-6 border shadow-2xl ${isSadEnding ? 'bg-slate-800/80 border-gray-500/30' : 'bg-white/20 border-white/30'}`}>
+                        <div className="flex flex-col items-center text-center">
+                            {/* Icon */}
+                            {isSadEnding ? (
+                                <Heart className="w-8 h-8 text-gray-400 mb-2" />
+                            ) : (
+                                <Sparkles className={`w-8 h-8 text-${endingColor}-400 mb-2 animate-pulse`} />
+                            )}
 
-                    {/* Title */}
-                    <h1 className={`text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${gradientColors} mb-2`}>
-                        {currentDialogue.text}
-                    </h1>
+                            {/* Title */}
+                            <h1 className={`text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${gradientColors} mb-2`}>
+                                {currentDialogue.text}
+                            </h1>
 
-                    {/* Subtitle */}
-                    <p className={`text-sm mb-4 leading-relaxed ${isSadEnding ? 'text-gray-400' : 'text-gray-200'}`}>
-                        {currentDialogue.subtitle}
-                    </p>
+                            {/* Subtitle */}
+                            <p className={`text-sm mb-4 leading-relaxed ${isSadEnding ? 'text-gray-400' : 'text-gray-200'}`}>
+                                {currentDialogue.subtitle}
+                            </p>
 
-                    {/* Character badge */}
-                    <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full mb-4 ${isSadEnding ? 'bg-gray-500/20 border border-gray-400/30' : `bg-${endingColor}-500/20 border border-${endingColor}-400/50`}`}>
-                        {isSadEnding ? (
-                            <>
-                                <X className="w-4 h-4 text-gray-400" />
-                                <span className="text-gray-400 text-xs font-medium">다음에는 더 노력해보자...</span>
-                            </>
-                        ) : (
-                            <>
-                                <Heart className={`w-4 h-4 text-${endingColor}-400 fill-${endingColor}-400`} />
-                                <span className={`text-${endingColor}-400 text-xs font-medium`}>{characters[selectedEnding].name}와 함께한 추억</span>
-                            </>
-                        )}
+                            {/* Character badge */}
+                            <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full mb-4 ${isSadEnding ? 'bg-gray-500/20 border border-gray-400/30' : `bg-${endingColor}-500/20 border border-${endingColor}-400/50`}`}>
+                                {isSadEnding ? (
+                                    <>
+                                        <X className="w-4 h-4 text-gray-400" />
+                                        <span className="text-gray-400 text-xs font-medium">다음에는 더 노력해보자...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Heart className={`w-4 h-4 text-${endingColor}-400 fill-${endingColor}-400`} />
+                                        <span className={`text-${endingColor}-400 text-xs font-medium`}>{characters[selectedEnding].name}와 함께한 추억</span>
+                                    </>
+                                )}
+                            </div>
+
+                            {/* Back button */}
+                            <button
+                                onClick={onBack}
+                                className={`w-full px-6 py-3 bg-gradient-to-r ${gradientColors} text-white rounded-xl text-sm font-bold shadow-lg hover:scale-105 transition-transform flex items-center justify-center gap-2`}
+                            >
+                                <Home className="w-4 h-4" /> 메인으로 돌아가기
+                            </button>
+                        </div>
                     </div>
-
-                    {/* Back button */}
-                    <button
-                        onClick={onBack}
-                        className={`w-full px-6 py-3 bg-gradient-to-r ${gradientColors} text-white rounded-full text-sm font-bold shadow-lg hover:scale-105 transition-transform flex items-center justify-center gap-2`}
-                    >
-                        <Home className="w-4 h-4" /> 메인으로 돌아가기
-                    </button>
                 </div>
             </div>
         );
