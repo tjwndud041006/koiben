@@ -39,6 +39,7 @@ import bgEnding3 from './background_ending3.png';
 import bgBadEnding1 from './background_badending1.png';
 import bgBadEnding2 from './background_badending2.png';
 import bgBadEnding3 from './background_badending3.png';
+import bgPrologue from './background_school.png'; // Prologue background
 import boyImg from './boy.png';
 import boyTrainingImg from './boy_training.png';
 import girl1Img from './girl1.png';
@@ -145,6 +146,169 @@ const characters = {
 // 기존 코드의 storyData 부분만 이것으로 교체하세요
 
 const storyData = {
+    // ============================================
+    // Prologue: 운명의 교환학생 (運命の留学生)
+    // 모태솔로 주인공의 일본 교환학생 첫날
+    // ============================================
+    stage0: {
+        background: bgPrologue,
+        girl: null,
+        title: '프롤로그 - 운명의 교환학생',
+        dialogues: [
+            // 도입부: 벚꽃 흩날리는 캠퍼스
+            {
+                speaker: 'narration',
+                text: '벚꽃이 흩날리는 일본의 어느 대학교 교정. 캐리어를 끌고 서 있다.',
+                textJp: '桜が舞い散る日本のとある大学のキャンパス。キャリーケースを引いて立っている。'
+            },
+            {
+                speaker: 'narration',
+                text: '나는 오늘부터 이곳, 일본에서 교환학생 생활을 시작한다.',
+                textJp: '今日からここ、日本での交換留学生活が始まる。'
+            },
+            {
+                speaker: 'narration',
+                text: '스물 한 살. 인생 전체가 \"모태솔로\"인 역사였지만... 이번엔 다르다!',
+                textJp: '21歳。人生ずっと「彼女いない歴＝年齢」だったけど… 今回は違うぞ！'
+            },
+            {
+                speaker: 'narration',
+                text: '만화에서만 보던 로맨틱한 캠퍼스 라이프!',
+                textJp: 'アニメで見たようなロマンチックなキャンパスライフ！'
+            },
+            {
+                speaker: 'narration',
+                text: '이번 여행의 목표는 단 하나, 바로 \"연애\"다!',
+                textJp: '今回の旅の目標はただ一つ、まさに「恋愛」だ！'
+            },
+            // 낯선 학생이 말을 걸어온다
+            {
+                speaker: 'narration',
+                text: '그때, 누군가 다가와 말을 건다. 하지만 머릿속이 하얘진다.',
+                textJp: 'その時、誰かが近づいてきて話しかけてくる。しかし頭の中が真っ白になる。'
+            },
+            {
+                speaker: 'narration',
+                text: '???「あの、すみません。新入生の方ですか？ここ、どう行けばいいか分かります？」',
+            },
+            // 퀴즈 1: 첫 일본어 도전
+            {
+                speaker: 'quiz',
+                question: '상대방이 뭔가 물어보고 있다! "실례합니다"라는 뜻의 일본어는?',
+                options: [
+                    'すみません',
+                    'おはよう',
+                    'ありがとう',
+                    'さようなら'
+                ],
+                correct: 0
+            },
+            {
+                speaker: 'narration',
+                text: '어... 아노... 에... 나니...? 뭐라고 하는 거야?!',
+                textJp: 'えっ… あの… え… 何…？ 何て言ってるの？！',
+                condition: 'wrong'
+            },
+            {
+                speaker: 'narration',
+                text: '"すみません"...! 그래, 이건 실례합니다라는 뜻!',
+                textJp: '「すみません」…！ そう、これは失礼しますという意味！',
+                condition: 'correct'
+            },
+            // 절망의 순간
+            {
+                speaker: 'narration',
+                text: '하지만 그 다음 말은 전혀 알아들을 수가 없었다...',
+                textJp: 'しかしその次の言葉は全然聞き取れなかった...'
+            },
+            {
+                speaker: 'narration',
+                text: '하나도 못 알아듣겠어!',
+                textJp: '全然聞き取れないよ！'
+            },
+            {
+                speaker: 'narration',
+                text: '큰일났다. 연애는커녕 말 한마디도 못 섞어보고 한국으로 돌아가게 생겼잖아!',
+                textJp: 'やばい。恋愛どころか、一言も喋れずに韓国に帰ることになっちゃう！'
+            },
+            // 퀴즈 2: 기본 인사
+            {
+                speaker: 'quiz',
+                question: '일본에서 살아남으려면 기본 인사부터! "안녕하세요"는 일본어로?',
+                options: [
+                    'さようなら',
+                    'おやすみ',
+                    'こんにちは',
+                    'いただきます'
+                ],
+                correct: 2
+            },
+            {
+                speaker: 'narration',
+                text: '그래, "こんにちは"! 이것부터 제대로 시작하자!',
+                textJp: 'そう、「こんにちは」！これからちゃんと始めよう！',
+                condition: 'correct'
+            },
+            {
+                speaker: 'narration',
+                text: '"こんにちは"가 안녕하세요구나... 기본부터 다시 배워야겠어.',
+                textJp: '「こんにちは」がこんにちはか... 基本から勉強し直そう。',
+                condition: 'wrong'
+            },
+            // 결심
+            {
+                speaker: 'narration',
+                text: '좋아, 결심했어.',
+                textJp: 'よし、決めたぞ。'
+            },
+            {
+                speaker: 'narration',
+                text: '일본어 공부를 제대로 시작하는 거야.',
+                textJp: '日本語の勉強を本気で始めるんだ。'
+            },
+            {
+                speaker: 'narration',
+                text: '공부하다 보면… 내 운명의 상대도 나타나겠지?',
+                textJp: '勉強していれば… 僕の運命の人も現れるよね？'
+            },
+            // 퀴즈 3: 감사 표현
+            {
+                speaker: 'quiz',
+                question: '일본어 공부 결심! 먼저 "감사합니다"는 뭘까?',
+                options: [
+                    'ごめんなさい',
+                    'ありがとうございます',
+                    'おねがいします',
+                    'すみません'
+                ],
+                correct: 1
+            },
+            {
+                speaker: 'narration',
+                text: '"ありがとうございます"! 감사의 마음은 어디서나 통하는 법이지!',
+                textJp: '「ありがとうございます」！感謝の気持ちはどこでも通じるんだ！',
+                condition: 'correct'
+            },
+            {
+                speaker: 'narration',
+                text: '감사합니다는 "ありがとうございます"... 이것도 외워야겠다.',
+                textJp: 'ありがとうございますは「ありがとうございます」... これも覚えよう。',
+                condition: 'wrong'
+            },
+            // 타이틀 로고
+            {
+                speaker: 'narration',
+                text: '이렇게, 내 운명을 바꿀 일본어 공부가 시작되었다.',
+                textJp: 'こうして、僕の運命を変える日本語の勉強が始まった。'
+            },
+            {
+                speaker: 'title',
+                text: '코이벤: 사랑하며 배우는 일본어',
+                textJp: 'Koiben: 恋して学ぶ日本語'
+            },
+        ]
+    },
+
     // ============================================
     // Stage 1: School - Hana (하나)
     // 난이도: ★☆☆ (기초)
@@ -1705,8 +1869,8 @@ export { storyData, endings, sadEndings };
 // Main App Component
 export default function KoibenApp() {
     const [currentScreen, setCurrentScreen] = useState('title');
-    const [currentStage, setCurrentStage] = useState(1);
-    const [unlockedStage, setUnlockedStage] = useState(1); // Highest unlocked stage
+    const [currentStage, setCurrentStage] = useState(0); // Start with prologue (stage 0)
+    const [unlockedStage, setUnlockedStage] = useState(0); // Prologue is unlocked by default
     const [affection, setAffection] = useState({ girl1: 0, girl2: 0, girl3: 0 });
     const [learnedWords, setLearnedWords] = useState([]);
     const [wrongWords, setWrongWords] = useState([]);
@@ -1721,9 +1885,10 @@ export default function KoibenApp() {
         }));
 
         if (currentStage < 4) {
-            setCurrentStage(prev => prev + 1);
+            const nextStage = currentStage + 1;
+            setCurrentStage(nextStage);
             // Unlock next stage
-            setUnlockedStage(prev => Math.max(prev, currentStage + 1));
+            setUnlockedStage(prev => Math.max(prev, nextStage));
         }
     };
 
@@ -1794,6 +1959,7 @@ export default function KoibenApp() {
 // Stage Select Screen
 function StageSelect({ unlockedStage, onSelectStage, onBack }) {
     const stages = [
+        { id: 0, title: '프롤로그', girl: null, color: 'sky', desc: '운명의 교환학생 - 일본 도착' },
         { id: 1, title: '하나 - 학교', girl: 'girl1', color: 'pink', desc: '귀여운 여사친과의 첫 만남' },
         { id: 2, title: '미사키 - 마을', girl: 'girl2', color: 'purple', desc: '지적인 소녀와의 조우' },
         { id: 3, title: '히나타 - 카페', girl: 'girl3', color: 'amber', desc: '새침한 알바생과의 만남' },
@@ -1801,7 +1967,7 @@ function StageSelect({ unlockedStage, onSelectStage, onBack }) {
     ];
 
     return (
-        <div className="min-h-screen relative">
+        <div className="h-screen relative overflow-hidden">
             <div
                 className="absolute inset-0 bg-cover bg-center"
                 style={{ backgroundImage: `url(${bgSchool})` }}
@@ -1809,22 +1975,23 @@ function StageSelect({ unlockedStage, onSelectStage, onBack }) {
                 <div className="absolute inset-0 bg-slate-900/80" />
             </div>
 
-            <div className="relative z-10 min-h-screen flex flex-col p-6">
-                <button onClick={onBack} className="flex items-center gap-2 text-gray-400 hover:text-white mb-8">
-                    <ArrowLeft className="w-5 h-5" /> 돌아가기
+            <div className="relative z-10 h-full flex flex-col p-3">
+                <button onClick={onBack} className="flex items-center gap-1 text-gray-400 hover:text-white mb-3 text-xs">
+                    <ArrowLeft className="w-4 h-4" /> 돌아가기
                 </button>
 
-                <div className="text-center mb-8">
-                    <BookOpen className="w-12 h-12 text-pink-400 mx-auto mb-2" />
-                    <h1 className="text-3xl font-bold text-white mb-2">스테이지 선택</h1>
-                    <p className="text-gray-400">플레이할 스테이지를 선택하세요</p>
-                </div>
+                <div className="flex-1 flex flex-col justify-center">
+                    <div className="text-center mb-4">
+                        <BookOpen className="w-6 h-6 text-pink-400 mx-auto mb-1" />
+                        <h1 className="text-lg font-bold text-white mb-0.5">스테이지 선택</h1>
+                        <p className="text-gray-400 text-xs">플레이할 스테이지를 선택하세요</p>
+                    </div>
 
-                <div className="flex-1 flex items-center justify-center">
-                    <div className="grid grid-cols-2 gap-6 max-w-2xl w-full">
+                    <div className="flex flex-col gap-2 max-w-sm mx-auto w-full">
                         {stages.map((stage) => {
                             const isLocked = stage.id > unlockedStage;
                             const colorClasses = {
+                                sky: 'border-sky-400/50 hover:bg-sky-500/20',
                                 pink: 'border-pink-400/50 hover:bg-pink-500/20',
                                 purple: 'border-purple-400/50 hover:bg-purple-500/20',
                                 amber: 'border-amber-400/50 hover:bg-amber-500/20',
@@ -1836,31 +2003,28 @@ function StageSelect({ unlockedStage, onSelectStage, onBack }) {
                                     key={stage.id}
                                     onClick={() => !isLocked && onSelectStage(stage.id)}
                                     disabled={isLocked}
-                                    className={`p-6 rounded-2xl bg-slate-800/80 backdrop-blur border-2 transition-all ${isLocked ? lockedClass : colorClasses[stage.color]}`}
+                                    className={`p-2 rounded-lg bg-slate-800/80 backdrop-blur border transition-all ${isLocked ? lockedClass : colorClasses[stage.color]}`}
                                 >
-                                    <div className="flex items-center gap-4">
+                                    <div className="flex items-center gap-3">
                                         {isLocked ? (
-                                            <div className="w-20 h-28 rounded-lg border-2 border-gray-600/50 bg-slate-700/50 flex items-center justify-center">
-                                                <Save className="w-10 h-10 text-gray-500" />
+                                            <div className="w-8 h-10 rounded-md border border-gray-600/50 bg-slate-700/50 flex items-center justify-center">
+                                                <Save className="w-4 h-4 text-gray-500" />
                                             </div>
                                         ) : stage.girl ? (
                                             <img
                                                 src={characters[stage.girl].image}
                                                 alt={stage.title}
-                                                className="w-20 h-28 object-cover rounded-lg border-2 border-white/20"
+                                                className="w-8 h-10 object-cover rounded-md border border-white/20"
                                             />
                                         ) : (
-                                            <div className="w-20 h-28 rounded-lg border-2 border-white/20 bg-gradient-to-br from-pink-500/30 to-purple-500/30 flex items-center justify-center">
-                                                <Heart className="w-10 h-10 text-pink-400" />
+                                            <div className="w-8 h-10 rounded-md border border-white/20 bg-gradient-to-br from-pink-500/30 to-purple-500/30 flex items-center justify-center">
+                                                <Heart className="w-4 h-4 text-pink-400" />
                                             </div>
                                         )}
-                                        <div className="text-left">
-                                            <div className="text-sm text-gray-400 mb-1">Stage {stage.id}</div>
-                                            <div className={`text-xl font-bold mb-1 ${isLocked ? 'text-gray-500' : 'text-white'}`}>
+                                        <div className="flex-1 text-left">
+                                            <div className="text-xs text-gray-400">Stage {stage.id}</div>
+                                            <div className={`text-sm font-bold ${isLocked ? 'text-gray-500' : 'text-white'}`}>
                                                 {isLocked ? '🔒 ' : ''}{stage.title}
-                                            </div>
-                                            <div className="text-sm text-gray-400">
-                                                {isLocked ? '이전 스테이지를 클리어하세요' : stage.desc}
                                             </div>
                                         </div>
                                     </div>
@@ -1896,38 +2060,38 @@ function TitleScreen({ onStart }) {
             {/* Content */}
             <div className="relative z-10 text-center px-6">
                 {/* Characters preview */}
-                <div className="flex justify-center gap-4 mb-10" style={{ animation: 'fadeIn 1s ease-out' }}>
-                    <img src={girl1Img} alt="Girl 1" className="w-28 h-36 object-cover rounded-2xl shadow-2xl border-4 border-pink-400/50" />
-                    <img src={girl3Img} alt="Girl 3" className="w-28 h-36 object-cover rounded-2xl shadow-2xl border-4 border-amber-400/50" />
-                    <img src={boyImg} alt="Boy" className="w-32 h-40 object-cover rounded-2xl shadow-2xl border-4 border-blue-400/50" />
-                    <img src={girl2Img} alt="Girl 2" className="w-28 h-36 object-cover rounded-2xl shadow-2xl border-4 border-purple-400/50" />
+                <div className="flex justify-center gap-2 mb-6" style={{ animation: 'fadeIn 1s ease-out' }}>
+                    <img src={girl1Img} alt="Girl 1" className="w-16 h-20 object-cover rounded-xl shadow-xl border-2 border-pink-400/50" />
+                    <img src={girl3Img} alt="Girl 3" className="w-16 h-20 object-cover rounded-xl shadow-xl border-2 border-amber-400/50" />
+                    <img src={boyImg} alt="Boy" className="w-20 h-24 object-cover rounded-xl shadow-xl border-2 border-blue-400/50" />
+                    <img src={girl2Img} alt="Girl 2" className="w-16 h-20 object-cover rounded-xl shadow-xl border-2 border-purple-400/50" />
                 </div>
 
                 {/* Title */}
                 <div style={{ animation: 'fadeIn 1s ease-out 0.3s both' }}>
-                    <div className="flex items-center justify-center gap-4 mb-4">
-                        <Heart className="w-12 h-12 text-pink-400 fill-pink-400" />
-                        <h1 className="text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-rose-400 to-purple-400">
+                    <div className="flex items-center justify-center gap-2 mb-2">
+                        <Heart className="w-6 h-6 text-pink-400 fill-pink-400" />
+                        <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-rose-400 to-purple-400">
                             恋勉
                         </h1>
-                        <Heart className="w-12 h-12 text-purple-400 fill-purple-400" />
+                        <Heart className="w-6 h-6 text-purple-400 fill-purple-400" />
                     </div>
-                    <h2 className="text-3xl text-pink-300/80 tracking-widest mb-3">KOIBEN</h2>
-                    <p className="text-gray-400 text-xl">~ 사랑하며 배우는 일본어 ~</p>
+                    <h2 className="text-xl text-pink-300/80 tracking-widest mb-2">KOIBEN</h2>
+                    <p className="text-gray-400 text-sm">~ 사랑하며 배우는 일본어 ~</p>
                 </div>
 
                 {/* Start Button */}
                 {showStart && (
                     <button
                         onClick={onStart}
-                        className="mt-14 group relative px-20 py-5 overflow-hidden rounded-full"
+                        className="mt-8 group relative px-12 py-3 overflow-hidden rounded-full"
                         style={{ animation: 'fadeIn 0.8s ease-out' }}
                     >
                         <div className="absolute inset-0 bg-gradient-to-r from-pink-500 to-purple-500" />
                         <div className="absolute inset-0 bg-gradient-to-r from-pink-400 to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                         <div className="absolute inset-px bg-slate-900/80 rounded-full group-hover:bg-slate-900/60 transition-colors" />
-                        <span className="relative flex items-center gap-4 text-2xl text-white font-medium">
-                            <Play className="w-7 h-7 fill-current" />
+                        <span className="relative flex items-center gap-2 text-base text-white font-medium">
+                            <Play className="w-5 h-5 fill-current" />
                             게임 시작
                         </span>
                     </button>
@@ -1956,73 +2120,57 @@ function MainMenu({ affection, energy, learnedWords, currentStage, onNavigate })
                 <div className="absolute inset-0 bg-slate-900/70" />
             </div>
 
-            <div className="relative z-10 min-h-screen flex flex-col p-6">
+            <div className="relative z-10 h-screen flex flex-col p-3 overflow-hidden">
                 {/* Header Stats */}
-                <div className="flex justify-between items-center mb-6">
-                    <div className="flex gap-3 flex-wrap">
-                        <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-pink-500/20 border border-pink-400/30">
-                            <Heart className="w-5 h-5 text-pink-400" />
-                            <span className="text-pink-400 text-base font-medium">{characters.girl1.name}: {affection.girl1}%</span>
-                        </div>
-                        <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/20 border border-purple-400/30">
-                            <Heart className="w-5 h-5 text-purple-400" />
-                            <span className="text-purple-400 text-base font-medium">{characters.girl2.name}: {affection.girl2}%</span>
-                        </div>
-                        <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/20 border border-amber-400/30">
-                            <Heart className="w-5 h-5 text-amber-400" />
-                            <span className="text-amber-400 text-base font-medium">{characters.girl3.name}: {affection.girl3}%</span>
-                        </div>
+                <div className="flex flex-wrap justify-center gap-1 mb-3 mt-4">
+                    <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-pink-500/20 border border-pink-400/30">
+                        <Heart className="w-3 h-3 text-pink-400" />
+                        <span className="text-pink-400 text-xs font-medium">{characters.girl1.name}: {affection.girl1}%</span>
                     </div>
-                    <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/20 border border-emerald-400/30">
-                        <Zap className="w-5 h-5 text-emerald-400" />
-                        <span className="text-emerald-400 text-base font-medium">{energy}/5</span>
+                    <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-purple-500/20 border border-purple-400/30">
+                        <Heart className="w-3 h-3 text-purple-400" />
+                        <span className="text-purple-400 text-xs font-medium">{characters.girl2.name}: {affection.girl2}%</span>
+                    </div>
+                    <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-amber-500/20 border border-amber-400/30">
+                        <Heart className="w-3 h-3 text-amber-400" />
+                        <span className="text-amber-400 text-xs font-medium">{characters.girl3.name}: {affection.girl3}%</span>
+                    </div>
+                    <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30">
+                        <Zap className="w-3 h-3 text-emerald-400" />
+                        <span className="text-emerald-400 text-xs font-medium">{energy}/5</span>
                     </div>
                 </div>
 
                 {/* Main Content */}
                 <div className="flex-1 flex flex-col items-center justify-center">
-                    {/* Character Display */}
-                    <div className="flex items-end gap-4 mb-10">
+                    {/* Character Display - Boy only (1/3 of screen) */}
+                    <div className="flex items-center justify-center mb-2">
                         <div className="text-center">
-                            <img src={girl1Img} alt="Sakura" className="w-24 h-32 object-cover rounded-xl shadow-xl border-3 border-pink-400/50" />
-                            <p className="text-pink-400 text-base font-medium mt-2">사쿠라</p>
-                        </div>
-                        <div className="text-center">
-                            <img src={girl3Img} alt="Hinata" className="w-24 h-32 object-cover rounded-xl shadow-xl border-3 border-amber-400/50" />
-                            <p className="text-amber-400 text-base font-medium mt-2">히나타</p>
-                        </div>
-                        <div className="text-center -mb-4">
-                            <Crown className="w-6 h-6 text-blue-400 mx-auto mb-1" />
-                            <img src={boyImg} alt="You" className="w-32 h-40 object-cover rounded-xl shadow-2xl border-3 border-blue-400/50" />
-                            <p className="text-blue-400 text-base font-medium mt-2">나</p>
-                        </div>
-                        <div className="text-center">
-                            <img src={girl2Img} alt="Yuki" className="w-24 h-32 object-cover rounded-xl shadow-xl border-3 border-purple-400/50" />
-                            <p className="text-purple-400 text-base font-medium mt-2">유키</p>
+                            <img src={boyImg} alt="You" className="h-[200px] w-auto object-contain rounded-xl shadow-xl border-2 border-blue-400/50" />
                         </div>
                     </div>
 
                     {/* Stage indicator */}
-                    <div className="bg-slate-800/80 backdrop-blur rounded-xl px-6 py-3 mb-8 border border-slate-700/50">
-                        <div className="flex items-center gap-4">
-                            <span className="text-gray-400 text-lg">현재 스테이지:</span>
-                            <div className="flex gap-2">
+                    <div className="bg-slate-800/80 backdrop-blur rounded-lg px-4 py-2 mb-4 border border-slate-700/50">
+                        <div className="flex items-center justify-center gap-3">
+                            <span className="text-gray-400 text-xs">현재 스테이지:</span>
+                            <div className="flex gap-1">
                                 {[1, 2, 3, 4].map(stage => (
                                     <div
                                         key={stage}
-                                        className={`w-10 h-3 rounded-full transition-colors ${stage <= currentStage
+                                        className={`w-6 h-2 rounded-full transition-colors ${stage <= currentStage
                                             ? 'bg-gradient-to-r from-pink-500 to-purple-500'
                                             : 'bg-slate-700'
                                             }`}
                                     />
                                 ))}
                             </div>
-                            <span className="text-white text-lg font-bold">{currentStage}/4</span>
+                            <span className="text-white text-sm font-bold">{currentStage}/4</span>
                         </div>
                     </div>
 
                     {/* Menu Buttons */}
-                    <div className="w-full max-w-lg space-y-4">
+                    <div className="w-full max-w-sm space-y-2">
                         <MenuButton
                             icon={BookOpen}
                             title="스토리 모드"
@@ -2053,23 +2201,23 @@ function MenuButton({ icon: Icon, title, subtitle, onClick, highlight }) {
     return (
         <button
             onClick={onClick}
-            className={`group w-full relative overflow-hidden rounded-2xl transition-all hover:scale-102 ${highlight ? 'ring-2 ring-pink-400/50' : ''
+            className={`group w-full relative overflow-hidden rounded-xl transition-all hover:scale-102 ${highlight ? 'ring-2 ring-pink-400/50' : ''
                 }`}
         >
             <div className="absolute inset-0 bg-slate-800/80 backdrop-blur" />
             <div className="absolute inset-0 bg-gradient-to-r from-pink-500/0 to-purple-500/0 group-hover:from-pink-500/20 group-hover:to-purple-500/20 transition-all" />
-            <div className="relative flex items-center gap-5 p-5">
-                <div className={`w-16 h-16 rounded-xl flex items-center justify-center border ${highlight
+            <div className="relative flex items-center gap-3 p-3">
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center border ${highlight
                     ? 'bg-gradient-to-br from-pink-500/30 to-purple-500/30 border-pink-400/30'
                     : 'bg-slate-700/50 border-slate-600/50'
                     }`}>
-                    <Icon className={`w-8 h-8 ${highlight ? 'text-pink-400' : 'text-gray-400'}`} />
+                    <Icon className={`w-5 h-5 ${highlight ? 'text-pink-400' : 'text-gray-400'}`} />
                 </div>
                 <div className="text-left flex-1">
-                    <div className="text-xl font-bold text-white">{title}</div>
-                    <div className="text-base text-gray-400">{subtitle}</div>
+                    <div className="text-sm font-bold text-white">{title}</div>
+                    <div className="text-xs text-gray-400">{subtitle}</div>
                 </div>
-                <ChevronRight className="w-7 h-7 text-gray-500 group-hover:text-pink-400 transition-colors" />
+                <ChevronRight className="w-5 h-5 text-gray-500 group-hover:text-pink-400 transition-colors" />
             </div>
         </button>
     );
@@ -2196,6 +2344,50 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
         );
     }
 
+    // Title screen (prologue ending)
+    if (currentDialogue.speaker === 'title') {
+        return (
+            <div className="h-screen flex flex-col items-center justify-center relative overflow-hidden">
+                {/* Background */}
+                <div
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{ backgroundImage: `url(${bgPrologue})` }}
+                >
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/70 to-slate-900/50" />
+                </div>
+
+                {/* Cherry blossom effect overlay */}
+                <div className="absolute inset-0 pointer-events-none">
+                    <div className="absolute top-10 left-10 w-2 h-2 bg-pink-300 rounded-full opacity-30 animate-bounce" style={{ animationDelay: '0.2s' }} />
+                    <div className="absolute top-20 right-20 w-1.5 h-1.5 bg-pink-200 rounded-full opacity-40 animate-bounce" style={{ animationDelay: '0.5s' }} />
+                    <div className="absolute top-40 left-1/3 w-1.5 h-1.5 bg-pink-300 rounded-full opacity-30 animate-bounce" style={{ animationDelay: '0.8s' }} />
+                    <div className="absolute top-32 right-1/4 w-2 h-2 bg-pink-200 rounded-full opacity-20 animate-bounce" style={{ animationDelay: '1s' }} />
+                </div>
+
+                {/* Title Content */}
+                <div className="relative z-10 text-center px-6" style={{ animation: 'fadeIn 1.5s ease-out' }}>
+                    <div className="mb-4">
+                        <Sparkles className="w-10 h-10 text-pink-400 mx-auto mb-2 animate-pulse" />
+                    </div>
+                    <h1 className="text-2xl font-bold text-white mb-3 drop-shadow-2xl" style={{ animation: 'fadeIn 1s ease-out' }}>
+                        {currentDialogue.text}
+                    </h1>
+                    <p className="text-base text-pink-300/80 mb-8" style={{ animation: 'fadeIn 1.5s ease-out' }}>
+                        {currentDialogue.textJp}
+                    </p>
+
+                    <button
+                        onClick={handleNext}
+                        className="px-8 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white text-sm font-bold rounded-full shadow-2xl hover:scale-105 transition-transform flex items-center gap-2 mx-auto border border-white/30"
+                    >
+                        <Play className="w-4 h-4" />
+                        스토리 시작하기
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
     // Ending screen
     if (currentDialogue.speaker === 'ending') {
         // Select ending background based on character and ending type
@@ -2291,22 +2483,22 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
             </div>
 
             {/* Boy Character - Always on Right */}
-            <div className="absolute bottom-48 right-[180px] z-10">
+            <div className="absolute bottom-32 right-2 z-10">
                 <img
                     src={boyImg}
                     alt="주인공"
-                    className="h-[800px] w-auto object-contain filter drop-shadow-2xl"
+                    className="h-[350px] w-auto object-contain filter drop-shadow-2xl"
                 />
             </div>
 
             {/* Girl Character - On Left when speaking */}
             {currentGirl && currentDialogue.speaker !== 'narration' && currentDialogue.speaker !== 'quiz' &&
                 currentDialogue.speaker !== 'choice' && currentDialogue.speaker !== 'finalChoice' && (
-                    <div className="absolute bottom-48 left-[180px] z-10">
+                    <div className="absolute bottom-32 left-2 z-10">
                         <img
                             src={characters[currentGirl].image}
                             alt={characters[currentGirl].name}
-                            className="h-[800px] w-auto object-contain filter drop-shadow-2xl"
+                            className="h-[350px] w-auto object-contain filter drop-shadow-2xl"
                         />
                     </div>
                 )}
@@ -2331,16 +2523,15 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
 
             {/* Dialogue Box */}
             <div className="absolute bottom-0 left-0 right-0 z-20">
-                <div className="relative mx-4 mb-16 overflow-hidden rounded-t-2xl">
+                <div className="relative mx-3 mb-12 overflow-hidden rounded-t-xl">
                     {/* White semi-transparent background */}
-                    <div className="absolute inset-0 bg-white/25 backdrop-blur-md rounded-t-2xl" />
+                    <div className="absolute inset-0 bg-white/25 backdrop-blur-md rounded-t-xl" />
 
-                    <div className="relative p-8">
-                        {/* Speaker Name */}
+                    <div className="relative p-4">
                         {currentDialogue.speaker !== 'narration' && currentDialogue.speaker !== 'quiz' &&
                             currentDialogue.speaker !== 'choice' && currentDialogue.speaker !== 'finalChoice' && currentGirl && (
-                                <div className="mb-4">
-                                    <span className={`inline-block px-6 py-2 rounded-lg text-xl text-white font-bold ${currentGirl === 'girl1' ? 'bg-pink-500/80' : 'bg-purple-500/80'
+                                <div className="mb-2">
+                                    <span className={`inline-block px-3 py-1 rounded-lg text-sm text-white font-bold ${currentGirl === 'girl1' ? 'bg-pink-500/80' : 'bg-purple-500/80'
                                         }`}>
                                         {characters[currentGirl].name}
                                     </span>
@@ -2350,14 +2541,14 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
                         {/* Quiz */}
                         {currentDialogue.speaker === 'quiz' && (
                             <div>
-                                <div className="text-white text-2xl mb-8">{currentDialogue.question}</div>
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="text-white text-base mb-4">{currentDialogue.question}</div>
+                                <div className="grid grid-cols-2 gap-2">
                                     {currentDialogue.options.map((option, idx) => (
                                         <button
                                             key={idx}
                                             onClick={() => handleQuizAnswer(idx)}
                                             disabled={quizAnswer !== null}
-                                            className={`p-5 rounded-xl text-xl font-bold transition-all ${quizAnswer !== null
+                                            className={`p-3 rounded-lg text-sm font-bold transition-all ${quizAnswer !== null
                                                 ? idx === currentDialogue.correct
                                                     ? 'bg-green-500/80 text-white'
                                                     : 'bg-slate-600/50 text-gray-400'
@@ -2369,7 +2560,7 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
                                     ))}
                                 </div>
                                 {quizAnswer && (
-                                    <div className={`mt-6 text-center text-2xl font-bold ${quizAnswer === 'correct' ? 'text-green-400' : 'text-red-400'}`}>
+                                    <div className={`mt-3 text-center text-base font-bold ${quizAnswer === 'correct' ? 'text-green-400' : 'text-red-400'}`}>
                                         {quizAnswer === 'correct' ? '✓ 정답!' : '✗ 아쉬워요...'}
                                     </div>
                                 )}
@@ -2379,13 +2570,13 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
                         {/* Choice */}
                         {currentDialogue.speaker === 'choice' && (
                             <div>
-                                <div className="text-white text-2xl mb-8">{currentDialogue.question}</div>
-                                <div className="space-y-4">
+                                <div className="text-white text-base mb-4">{currentDialogue.question}</div>
+                                <div className="space-y-2">
                                     {currentDialogue.options.map((option, idx) => (
                                         <button
                                             key={idx}
                                             onClick={() => handleChoice(idx)}
-                                            className="w-full p-5 rounded-xl text-xl font-medium bg-white/10 text-white hover:bg-white/20 border border-white/20 transition-all text-left"
+                                            className="w-full p-3 rounded-lg text-sm font-medium bg-white/10 text-white hover:bg-white/20 border border-white/20 transition-all text-left"
                                         >
                                             ▸ {option}
                                         </button>
@@ -2397,11 +2588,11 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
                         {/* Final Choice */}
                         {currentDialogue.speaker === 'finalChoice' && (
                             <div>
-                                <div className="text-center mb-8">
-                                    <Users className="w-16 h-16 text-pink-400 mx-auto mb-3" />
-                                    <div className="text-white text-2xl">{currentDialogue.question}</div>
+                                <div className="text-center mb-4">
+                                    <Users className="w-10 h-10 text-pink-400 mx-auto mb-2" />
+                                    <div className="text-white text-base">{currentDialogue.question}</div>
                                 </div>
-                                <div className="grid grid-cols-3 gap-4">
+                                <div className="grid grid-cols-3 gap-2">
                                     {currentDialogue.options.map((option, idx) => {
                                         const girlKey = ['girl1', 'girl2', 'girl3'][idx];
                                         const bgColors = ['bg-pink-500/30 hover:bg-pink-500/50 border-pink-400/50 text-pink-300', 'bg-purple-500/30 hover:bg-purple-500/50 border-purple-400/50 text-purple-300', 'bg-amber-500/30 hover:bg-amber-500/50 border-amber-400/50 text-amber-300'];
@@ -2409,12 +2600,12 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
                                             <button
                                                 key={idx}
                                                 onClick={() => handleFinalChoice(idx)}
-                                                className={`p-4 rounded-xl text-lg font-bold transition-all text-center border-2 ${bgColors[idx]}`}
+                                                className={`p-2 rounded-lg text-xs font-bold transition-all text-center border-2 ${bgColors[idx]}`}
                                             >
                                                 <img
                                                     src={characters[girlKey].image}
                                                     alt={option}
-                                                    className="w-24 h-32 object-cover rounded-lg mx-auto mb-2 border-2 border-white/20"
+                                                    className="w-16 h-20 object-cover rounded-lg mx-auto mb-1 border border-white/20"
                                                 />
                                                 {option}
                                             </button>
@@ -2427,17 +2618,17 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
                         {/* Regular dialogue */}
                         {currentDialogue.speaker !== 'quiz' && currentDialogue.speaker !== 'choice' && currentDialogue.speaker !== 'finalChoice' && (
                             <div onClick={handleNext} className="cursor-pointer">
-                                <p className={`text-white text-2xl leading-relaxed mb-3 transition-opacity ${textRevealed ? 'opacity-100' : 'opacity-0'}`}>
+                                <p className={`text-white text-sm leading-relaxed mb-2 transition-opacity ${textRevealed ? 'opacity-100' : 'opacity-0'}`}>
                                     {currentDialogue.text}
                                 </p>
                                 {currentDialogue.textJp && (
-                                    <p className={`text-pink-300/70 text-xl transition-opacity ${textRevealed ? 'opacity-100' : 'opacity-0'}`}>
+                                    <p className={`text-pink-300/70 text-xs transition-opacity ${textRevealed ? 'opacity-100' : 'opacity-0'}`}>
                                         {currentDialogue.textJp}
                                     </p>
                                 )}
-                                <div className="absolute bottom-6 right-8 flex items-center gap-1 text-pink-300/60 animate-pulse">
-                                    <ChevronRight className="w-6 h-6" />
-                                    <ChevronRight className="w-6 h-6 -ml-3" />
+                                <div className="absolute bottom-3 right-4 flex items-center gap-0.5 text-pink-300/60 animate-pulse">
+                                    <ChevronRight className="w-4 h-4" />
+                                    <ChevronRight className="w-4 h-4 -ml-2" />
                                 </div>
                             </div>
                         )}
@@ -2551,7 +2742,7 @@ function TrainingMode({ learnedWords, setLearnedWords, wrongWords, setWrongWords
 
     // Hiragana/Katakana Chart View
     const ChartView = ({ data, title, color }) => (
-        <div className="min-h-screen relative">
+        <div className="h-screen relative overflow-hidden">
             {/* Background */}
             <div
                 className="absolute inset-0 bg-cover bg-center"
@@ -2560,23 +2751,22 @@ function TrainingMode({ learnedWords, setLearnedWords, wrongWords, setWrongWords
                 <div className="absolute inset-0 bg-slate-900/70" />
             </div>
 
-            <div className="relative z-10 p-4">
-                <button onClick={() => setTab('select')} className="flex items-center gap-2 text-gray-300 hover:text-white mb-4 bg-white/10 backdrop-blur px-4 py-2 rounded-full border border-white/20">
-                    <ArrowLeft className="w-5 h-5" /> 돌아가기
+            <div className="relative z-10 h-full flex flex-col p-2">
+                <button onClick={() => setTab('select')} className="flex items-center gap-1 text-gray-300 hover:text-white mb-2 bg-white/10 backdrop-blur px-2 py-1 rounded-full border border-white/20 text-xs w-fit">
+                    <ArrowLeft className="w-3 h-3" /> 돌아가기
                 </button>
-                <div className="text-center mb-6">
-                    <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-${color}-500/20 border border-${color}-400/30 mb-2`}>
-                        <BookOpen className={`w-5 h-5 text-${color}-400`} />
-                        <span className={`text-${color}-400 font-bold text-xl`}>{title}</span>
-                    </div>
+                <div className="text-center mb-2">
+                    <span className={`text-${color}-400 font-bold text-sm`}>{title}</span>
                 </div>
-                <div className="grid grid-cols-5 gap-3 max-w-lg mx-auto">
-                    {data.map((item, idx) => (
-                        <div key={idx} className={`bg-white/10 backdrop-blur rounded-xl p-3 text-center border border-white/20 hover:bg-white/20 hover:border-${color}-400/50 transition-all`}>
-                            <div className="text-2xl font-bold text-white">{item.char}</div>
-                            <div className={`text-xs text-${color}-400`}>{item.romaji}</div>
-                        </div>
-                    ))}
+                <div className="flex-1 overflow-y-auto">
+                    <div className="grid grid-cols-5 gap-1 max-w-xs mx-auto">
+                        {data.map((item, idx) => (
+                            <div key={idx} className={`bg-white/10 backdrop-blur rounded-md p-1.5 text-center border border-white/20`}>
+                                <div className="text-lg font-bold text-white">{item.char}</div>
+                                <div className={`text-xs text-${color}-400`}>{item.romaji}</div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>
@@ -2877,8 +3067,8 @@ function TrainingMode({ learnedWords, setLearnedWords, wrongWords, setWrongWords
                             onClick={startListening}
                             disabled={isListening}
                             className={`w-24 h-24 rounded-full flex items-center justify-center transition-all ${isListening
-                                    ? 'bg-red-500 animate-pulse'
-                                    : 'bg-gradient-to-r from-emerald-500 to-teal-500 hover:scale-110'
+                                ? 'bg-red-500 animate-pulse'
+                                : 'bg-gradient-to-r from-emerald-500 to-teal-500 hover:scale-110'
                                 }`}
                         >
                             <Mic className="w-10 h-10 text-white" />
@@ -2897,15 +3087,15 @@ function TrainingMode({ learnedWords, setLearnedWords, wrongWords, setWrongWords
                                         <div className="w-full h-2 bg-slate-700 rounded-full overflow-hidden">
                                             <div
                                                 className={`h-full transition-all duration-500 ${matchScore >= 90 ? 'bg-emerald-500' :
-                                                        matchScore >= 70 ? 'bg-green-500' :
-                                                            matchScore >= 40 ? 'bg-yellow-500' : 'bg-red-500'
+                                                    matchScore >= 70 ? 'bg-green-500' :
+                                                        matchScore >= 40 ? 'bg-yellow-500' : 'bg-red-500'
                                                     }`}
                                                 style={{ width: `${matchScore}%` }}
                                             />
                                         </div>
                                         <p className={`text-right text-sm mt-1 ${matchScore >= 90 ? 'text-emerald-400' :
-                                                matchScore >= 70 ? 'text-green-400' :
-                                                    matchScore >= 40 ? 'text-yellow-400' : 'text-red-400'
+                                            matchScore >= 70 ? 'text-green-400' :
+                                                matchScore >= 40 ? 'text-yellow-400' : 'text-red-400'
                                             }`}>{matchScore}% 일치</p>
                                     </div>
                                 )}
@@ -2915,10 +3105,10 @@ function TrainingMode({ learnedWords, setLearnedWords, wrongWords, setWrongWords
                         {/* Feedback */}
                         {feedback && (
                             <div className={`mt-4 p-4 rounded-xl max-w-md w-full text-center ${feedback.type === 'perfect' ? 'bg-emerald-500/20 border border-emerald-400/50 text-emerald-400' :
-                                    feedback.type === 'good' ? 'bg-green-500/20 border border-green-400/50 text-green-400' :
-                                        feedback.type === 'okay' ? 'bg-yellow-500/20 border border-yellow-400/50 text-yellow-400' :
-                                            feedback.type === 'retry' ? 'bg-orange-500/20 border border-orange-400/50 text-orange-400' :
-                                                'bg-red-500/20 border border-red-400/50 text-red-400'
+                                feedback.type === 'good' ? 'bg-green-500/20 border border-green-400/50 text-green-400' :
+                                    feedback.type === 'okay' ? 'bg-yellow-500/20 border border-yellow-400/50 text-yellow-400' :
+                                        feedback.type === 'retry' ? 'bg-orange-500/20 border border-orange-400/50 text-orange-400' :
+                                            'bg-red-500/20 border border-red-400/50 text-red-400'
                                 }`}>
                                 {feedback.message}
                             </div>
@@ -2949,91 +3139,82 @@ function TrainingMode({ learnedWords, setLearnedWords, wrongWords, setWrongWords
             </div>
 
             {/* Content */}
-            <div className="relative z-10 min-h-screen flex">
-                {/* Left Side - Character */}
-                <div className="hidden md:flex w-1/3 items-end justify-center pb-0">
-                    <img
-                        src={boyTrainingImg}
-                        alt="Study Boy"
-                        className="h-[80vh] object-contain drop-shadow-2xl rounded-3xl"
-                    />
-                </div>
-
+            <div className="relative z-10 h-screen flex flex-col overflow-hidden">
                 {/* Right Side - Training Content */}
-                <div className="flex-1 p-6 overflow-y-auto">
+                <div className="flex-1 p-3 overflow-y-auto">
                     {/* Back Button */}
-                    <button onClick={onBack} className="flex items-center gap-2 text-gray-300 hover:text-white mb-6 bg-slate-800/50 px-4 py-2 rounded-full">
-                        <ArrowLeft className="w-5 h-5" /> 메인으로 돌아가기
+                    <button onClick={onBack} className="flex items-center gap-1 text-gray-300 hover:text-white mb-3 bg-slate-800/50 px-3 py-1.5 rounded-full text-xs">
+                        <ArrowLeft className="w-4 h-4" /> 메인으로 돌아가기
                     </button>
 
-                    <div className="text-center mb-6">
-                        <Pencil className="w-10 h-10 text-purple-400 mx-auto mb-2" />
-                        <h1 className="text-2xl font-bold text-white mb-1">트레이닝 센터</h1>
-                        <div className="flex items-center justify-center gap-2 text-emerald-400">
-                            <Zap className="w-4 h-4" />
-                            <span className="text-sm">{energy}/5 에너지</span>
+                    <div className="text-center mb-4">
+                        <Pencil className="w-6 h-6 text-purple-400 mx-auto mb-1" />
+                        <h1 className="text-lg font-bold text-white mb-0.5">트레이닝 센터</h1>
+                        <div className="flex items-center justify-center gap-1 text-emerald-400">
+                            <Zap className="w-3 h-3" />
+                            <span className="text-xs">{energy}/5 에너지</span>
                         </div>
                     </div>
 
                     {/* Chart Section */}
-                    <div className="mb-6">
-                        <h2 className="text-lg font-bold text-white mb-3 flex items-center gap-2"><BookOpen className="w-5 h-5 text-pink-400" /> 문자 학습</h2>
-                        <div className="grid grid-cols-2 gap-3">
-                            <button onClick={() => setTab('hiragana-chart')} className="p-4 bg-slate-800/80 rounded-xl border border-pink-400/30 hover:border-pink-400 transition-all">
-                                <div className="text-3xl mb-1">あ</div>
-                                <div className="font-medium text-white text-sm">히라가나 표</div>
+                    <div className="mb-4">
+                        <h2 className="text-sm font-bold text-white mb-2 flex items-center gap-1"><BookOpen className="w-4 h-4 text-pink-400" /> 문자 학습</h2>
+                        <div className="grid grid-cols-2 gap-2">
+                            <button onClick={() => setTab('hiragana-chart')} className="p-3 bg-slate-800/80 rounded-lg border border-pink-400/30 hover:border-pink-400 transition-all">
+                                <div className="text-2xl mb-0.5">あ</div>
+                                <div className="font-medium text-white text-xs">히라가나 표</div>
                                 <div className="text-xs text-gray-400">46자 암기</div>
                             </button>
-                            <button onClick={() => setTab('katakana-chart')} className="p-4 bg-slate-800/80 rounded-xl border border-purple-400/30 hover:border-purple-400 transition-all">
-                                <div className="text-3xl mb-1">ア</div>
-                                <div className="font-medium text-white text-sm">가타카나 표</div>
+                            <button onClick={() => setTab('katakana-chart')} className="p-3 bg-slate-800/80 rounded-lg border border-purple-400/30 hover:border-purple-400 transition-all">
+                                <div className="text-2xl mb-0.5">ア</div>
+                                <div className="font-medium text-white text-xs">가타카나 표</div>
                                 <div className="text-xs text-gray-400">46자 암기</div>
                             </button>
                         </div>
                     </div>
 
                     {/* Quiz Section */}
-                    <div className="mb-6">
-                        <h2 className="text-lg font-bold text-white mb-3 flex items-center gap-2"><Pencil className="w-5 h-5 text-purple-400" /> 퀴즈 도전</h2>
-                        <div className="grid grid-cols-2 gap-3 mb-3">
-                            <button onClick={() => startQuiz('hiragana')} disabled={energy <= 0} className="p-4 bg-slate-800/80 rounded-xl border border-pink-400/30 hover:border-pink-400 transition-all disabled:opacity-50">
-                                <div className="text-2xl mb-1">あ→a</div>
-                                <div className="font-medium text-white text-sm">히라가나 퀴즈</div>
+                    <div className="mb-4">
+                        <h2 className="text-sm font-bold text-white mb-2 flex items-center gap-1"><Pencil className="w-4 h-4 text-purple-400" /> 퀴즈 도전</h2>
+                        <div className="grid grid-cols-2 gap-2 mb-2">
+                            <button onClick={() => startQuiz('hiragana')} disabled={energy <= 0} className="p-3 bg-slate-800/80 rounded-lg border border-pink-400/30 hover:border-pink-400 transition-all disabled:opacity-50">
+                                <div className="text-lg mb-0.5">あ→a</div>
+                                <div className="font-medium text-white text-xs">히라가나 퀴즈</div>
                             </button>
-                            <button onClick={() => startQuiz('katakana')} disabled={energy <= 0} className="p-4 bg-slate-800/80 rounded-xl border border-purple-400/30 hover:border-purple-400 transition-all disabled:opacity-50">
-                                <div className="text-2xl mb-1">ア→a</div>
-                                <div className="font-medium text-white text-sm">가타카나 퀴즈</div>
+                            <button onClick={() => startQuiz('katakana')} disabled={energy <= 0} className="p-3 bg-slate-800/80 rounded-lg border border-purple-400/30 hover:border-purple-400 transition-all disabled:opacity-50">
+                                <div className="text-lg mb-0.5">ア→a</div>
+                                <div className="font-medium text-white text-xs">가타카나 퀴즈</div>
                             </button>
                         </div>
                     </div>
 
                     {/* Stage Vocabulary */}
-                    <div className="mb-6">
-                        <h2 className="text-lg font-bold text-white mb-3 flex items-center gap-2"><BookMarked className="w-5 h-5 text-amber-400" /> 스테이지 단어</h2>
-                        <div className="space-y-3">
-                            <button onClick={() => startQuiz('vocab-1')} disabled={energy <= 0} className="w-full p-4 bg-slate-800/80 rounded-xl border border-pink-400/30 hover:border-pink-400 transition-all disabled:opacity-50 text-left">
-                                <div className="flex items-center gap-3">
-                                    <img src={girl1Img} alt="하나" className="w-12 h-12 rounded-full object-cover border-2 border-pink-400/50" />
+                    <div className="mb-4">
+                        <h2 className="text-sm font-bold text-white mb-2 flex items-center gap-1"><BookMarked className="w-4 h-4 text-amber-400" /> 스테이지 단어</h2>
+                        <div className="space-y-2">
+                            <button onClick={() => startQuiz('vocab-1')} disabled={energy <= 0} className="w-full p-3 bg-slate-800/80 rounded-lg border border-pink-400/30 hover:border-pink-400 transition-all disabled:opacity-50 text-left">
+                                <div className="flex items-center gap-2">
+                                    <img src={girl1Img} alt="하나" className="w-8 h-8 rounded-full object-cover border border-pink-400/50" />
                                     <div>
-                                        <div className="font-medium text-pink-400">Stage 1 - 하나</div>
+                                        <div className="font-medium text-pink-400 text-xs">Stage 1 - 하나</div>
                                         <div className="text-xs text-gray-400">기초 인사, 학교 단어</div>
                                     </div>
                                 </div>
                             </button>
-                            <button onClick={() => startQuiz('vocab-2')} disabled={energy <= 0} className="w-full p-4 bg-slate-800/80 rounded-xl border border-purple-400/30 hover:border-purple-400 transition-all disabled:opacity-50 text-left">
-                                <div className="flex items-center gap-3">
-                                    <img src={girl2Img} alt="미사키" className="w-12 h-12 rounded-full object-cover border-2 border-purple-400/50" />
+                            <button onClick={() => startQuiz('vocab-2')} disabled={energy <= 0} className="w-full p-3 bg-slate-800/80 rounded-lg border border-purple-400/30 hover:border-purple-400 transition-all disabled:opacity-50 text-left">
+                                <div className="flex items-center gap-2">
+                                    <img src={girl2Img} alt="미사키" className="w-8 h-8 rounded-full object-cover border border-purple-400/50" />
                                     <div>
-                                        <div className="font-medium text-purple-400">Stage 2 - 미사키</div>
+                                        <div className="font-medium text-purple-400 text-xs">Stage 2 - 미사키</div>
                                         <div className="text-xs text-gray-400">존댓말, 감정 표현</div>
                                     </div>
                                 </div>
                             </button>
-                            <button onClick={() => startQuiz('vocab-3')} disabled={energy <= 0} className="w-full p-4 bg-slate-800/80 rounded-xl border border-amber-400/30 hover:border-amber-400 transition-all disabled:opacity-50 text-left">
-                                <div className="flex items-center gap-3">
-                                    <img src={girl3Img} alt="히나타" className="w-12 h-12 rounded-full object-cover border-2 border-amber-400/50" />
+                            <button onClick={() => startQuiz('vocab-3')} disabled={energy <= 0} className="w-full p-3 bg-slate-800/80 rounded-lg border border-amber-400/30 hover:border-amber-400 transition-all disabled:opacity-50 text-left">
+                                <div className="flex items-center gap-2">
+                                    <img src={girl3Img} alt="히나타" className="w-8 h-8 rounded-full object-cover border border-amber-400/50" />
                                     <div>
-                                        <div className="font-medium text-amber-400">Stage 3 - 히나타</div>
+                                        <div className="font-medium text-amber-400 text-xs">Stage 3 - 히나타</div>
                                         <div className="text-xs text-gray-400">구어체, 카페 표현</div>
                                     </div>
                                 </div>
@@ -3042,18 +3223,18 @@ function TrainingMode({ learnedWords, setLearnedWords, wrongWords, setWrongWords
                     </div>
 
                     {/* AI Pronunciation Practice */}
-                    <div className="mb-6">
-                        <h2 className="text-lg font-bold text-white mb-3 flex items-center gap-2"><Mic className="w-5 h-5 text-emerald-400" /> AI 발음 연습</h2>
+                    <div className="mb-4">
+                        <h2 className="text-sm font-bold text-white mb-2 flex items-center gap-1"><Mic className="w-4 h-4 text-emerald-400" /> AI 발음 연습</h2>
                         <button
                             onClick={() => setTab('pronunciation')}
-                            className="w-full p-4 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 rounded-xl border border-emerald-400/30 hover:border-emerald-400 transition-all text-left"
+                            className="w-full p-3 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 rounded-lg border border-emerald-400/30 hover:border-emerald-400 transition-all text-left"
                         >
-                            <div className="flex items-center gap-3">
-                                <div className="w-12 h-12 rounded-full bg-emerald-500/30 flex items-center justify-center">
-                                    <Volume2 className="w-6 h-6 text-emerald-400" />
+                            <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 rounded-full bg-emerald-500/30 flex items-center justify-center">
+                                    <Volume2 className="w-4 h-4 text-emerald-400" />
                                 </div>
                                 <div>
-                                    <div className="font-medium text-emerald-400">발음 분석 시작</div>
+                                    <div className="font-medium text-emerald-400 text-xs">발음 분석 시작</div>
                                     <div className="text-xs text-gray-400">AI가 당신의 발음을 분석해드려요</div>
                                 </div>
                             </div>
@@ -3080,7 +3261,7 @@ function Dictionary({ learnedWords, wrongWords, setWrongWords, onBack }) {
     };
 
     return (
-        <div className="min-h-screen relative">
+        <div className="h-screen relative overflow-hidden">
             {/* Background */}
             <div
                 className="absolute inset-0 bg-cover bg-center"
@@ -3089,61 +3270,63 @@ function Dictionary({ learnedWords, wrongWords, setWrongWords, onBack }) {
                 <div className="absolute inset-0 bg-slate-900/50" />
             </div>
 
-            <div className="relative z-10 min-h-screen p-6">
+            <div className="relative z-10 h-full flex flex-col p-3">
                 {/* Back Button */}
-                <button onClick={onBack} className="flex items-center gap-2 text-gray-300 hover:text-white mb-6 bg-white/10 backdrop-blur px-4 py-2 rounded-full border border-white/20">
-                    <ArrowLeft className="w-5 h-5" /> 메인으로 돌아가기
+                <button onClick={onBack} className="flex items-center gap-1 text-gray-300 hover:text-white mb-3 bg-white/10 backdrop-blur px-3 py-1.5 rounded-full border border-white/20 text-xs w-fit">
+                    <ArrowLeft className="w-3 h-3" /> 메인으로 돌아가기
                 </button>
 
                 {/* Header */}
-                <div className="text-center mb-8">
-                    <div className="bg-white/10 backdrop-blur rounded-2xl p-6 inline-block border border-white/20">
-                        <BookMarked className="w-12 h-12 text-amber-400 mx-auto mb-2" />
-                        <h1 className="text-3xl font-bold text-white">틀린 단어 복습</h1>
-                        <p className="text-gray-300">{wrongWords.length}개 단어 복습 필요</p>
+                <div className="text-center mb-4">
+                    <div className="bg-white/10 backdrop-blur rounded-xl p-3 inline-block border border-white/20">
+                        <BookMarked className="w-8 h-8 text-amber-400 mx-auto mb-1" />
+                        <h1 className="text-lg font-bold text-white">틀린 단어 복습</h1>
+                        <p className="text-gray-300 text-xs">{wrongWords.length}개 단어 복습 필요</p>
                     </div>
                 </div>
 
                 {/* Wrong Words Section */}
-                {wrongWords.length === 0 ? (
-                    <div className="bg-white/10 backdrop-blur rounded-2xl p-8 text-center max-w-md mx-auto border border-white/20">
-                        <Star className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
-                        <h2 className="text-xl font-bold text-white mb-2">완벽해요!</h2>
-                        <p className="text-gray-300">틀린 단어가 없어요!<br />트레이닝 센터에서 퀴즈를 풀어보세요.</p>
-                    </div>
-                ) : (
-                    <div className="max-w-lg mx-auto space-y-4">
-                        {wrongWords.map((word, idx) => (
-                            <div key={idx} className="bg-white/15 backdrop-blur rounded-xl p-4 border border-white/20 hover:bg-white/20 transition-all">
-                                <div className="flex justify-between items-start">
-                                    <div className="flex-1">
-                                        <div className="text-2xl font-bold text-white">{word.japanese}</div>
-                                        <div className="text-gray-400 text-sm">{word.romaji}</div>
+                <div className="flex-1 overflow-y-auto">
+                    {wrongWords.length === 0 ? (
+                        <div className="bg-white/10 backdrop-blur rounded-xl p-4 text-center max-w-xs mx-auto border border-white/20">
+                            <Star className="w-10 h-10 text-yellow-400 mx-auto mb-2" />
+                            <h2 className="text-base font-bold text-white mb-1">완벽해요!</h2>
+                            <p className="text-gray-300 text-xs">틀린 단어가 없어요!<br />트레이닝 센터에서 퀴즈를 풀어보세요.</p>
+                        </div>
+                    ) : (
+                        <div className="max-w-sm mx-auto space-y-2">
+                            {wrongWords.map((word, idx) => (
+                                <div key={idx} className="bg-white/15 backdrop-blur rounded-lg p-3 border border-white/20 hover:bg-white/20 transition-all">
+                                    <div className="flex justify-between items-center">
+                                        <div className="flex-1">
+                                            <div className="text-base font-bold text-white">{word.japanese}</div>
+                                            <div className="text-gray-400 text-xs">{word.romaji}</div>
+                                        </div>
+                                        <div className="text-right flex-1">
+                                            <div className="font-medium text-amber-300 text-sm">{word.meaning}</div>
+                                            <div className="text-xs text-gray-400">Stage {word.stage}</div>
+                                        </div>
+                                        <button
+                                            onClick={() => removeWord(idx)}
+                                            className="ml-2 p-1.5 rounded-full bg-red-500/20 hover:bg-red-500/40 text-red-400 transition-all"
+                                            title="다 외웠어요!"
+                                        >
+                                            <X className="w-3 h-3" />
+                                        </button>
                                     </div>
-                                    <div className="text-right flex-1">
-                                        <div className="font-medium text-amber-300">{word.meaning}</div>
-                                        <div className="text-xs text-gray-400">Stage {word.stage}</div>
-                                    </div>
-                                    <button
-                                        onClick={() => removeWord(idx)}
-                                        className="ml-3 p-2 rounded-full bg-red-500/20 hover:bg-red-500/40 text-red-400 transition-all"
-                                        title="다 외웠어요!"
-                                    >
-                                        <X className="w-4 h-4" />
-                                    </button>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
 
-                        {/* Clear All Button */}
-                        <button
-                            onClick={() => setWrongWords([])}
-                            className="w-full py-3 bg-white/10 backdrop-blur rounded-full text-gray-300 hover:bg-white/20 border border-white/20 transition-all"
-                        >
-                            전체 지우기
-                        </button>
-                    </div>
-                )}
+                            {/* Clear All Button */}
+                            <button
+                                onClick={() => setWrongWords([])}
+                                className="w-full py-2 bg-white/10 backdrop-blur rounded-full text-gray-300 text-sm hover:bg-white/20 border border-white/20 transition-all"
+                            >
+                                전체 지우기
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

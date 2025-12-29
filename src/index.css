@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: #0f172a;
+}
+
+/* Mobile-first app container */
+#root {
+    max-width: 430px;
+    margin: 0 auto;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* For larger screens, add border effect */
+@media (min-width: 431px) {
+    #root {
+        box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+    }
+}
+
+/* Safe area for notch devices */
+@supports (padding: max(0px)) {
+    .safe-area-top {
+        padding-top: max(env(safe-area-inset-top), 20px);
+    }
+
+    .safe-area-bottom {
+        padding-bottom: max(env(safe-area-inset-bottom), 20px);
+    }
+}
+
+/* Prevent text selection for game feel */
+.no-select {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
