@@ -2424,36 +2424,36 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
                     <div className={`absolute inset-0 ${isSadEnding ? 'bg-slate-900/70' : 'bg-gradient-to-t from-slate-900/80 via-transparent to-transparent'}`} />
                 </div>
 
-                {/* Ending Card - Bottom Center */}
-                <div className={`relative z-20 text-center backdrop-blur-lg rounded-3xl p-8 border max-w-md mx-4 shadow-2xl ${isSadEnding ? 'bg-slate-800/50 border-gray-500/30' : 'bg-white/15 border-white/30'}`}>
+                {/* Ending Card - Bottom Center - Optimized for Mobile */}
+                <div className={`relative z-20 text-center backdrop-blur-lg rounded-2xl p-6 border max-w-sm mx-4 shadow-xl ${isSadEnding ? 'bg-slate-800/50 border-gray-500/30' : 'bg-white/15 border-white/30'}`}>
                     {/* Icon */}
                     {isSadEnding ? (
-                        <Heart className="w-10 h-10 text-gray-400 mx-auto mb-3" />
+                        <Heart className="w-8 h-8 text-gray-400 mx-auto mb-2" />
                     ) : (
-                        <Sparkles className={`w-10 h-10 text-${endingColor}-400 mx-auto mb-3 animate-pulse`} />
+                        <Sparkles className={`w-8 h-8 text-${endingColor}-400 mx-auto mb-2 animate-pulse`} />
                     )}
 
                     {/* Title */}
-                    <h1 className={`text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${gradientColors} mb-3`}>
+                    <h1 className={`text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${gradientColors} mb-2`}>
                         {currentDialogue.text}
                     </h1>
 
                     {/* Subtitle */}
-                    <p className={`text-lg mb-6 leading-relaxed ${isSadEnding ? 'text-gray-400' : 'text-gray-200'}`}>
+                    <p className={`text-sm mb-4 leading-relaxed ${isSadEnding ? 'text-gray-400' : 'text-gray-200'}`}>
                         {currentDialogue.subtitle}
                     </p>
 
                     {/* Character badge */}
-                    <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 ${isSadEnding ? 'bg-gray-500/20 border border-gray-400/30' : `bg-${endingColor}-500/20 border border-${endingColor}-400/50`}`}>
+                    <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full mb-4 ${isSadEnding ? 'bg-gray-500/20 border border-gray-400/30' : `bg-${endingColor}-500/20 border border-${endingColor}-400/50`}`}>
                         {isSadEnding ? (
                             <>
-                                <X className="w-5 h-5 text-gray-400" />
-                                <span className="text-gray-400 font-medium">다음에는 더 노력해보자...</span>
+                                <X className="w-4 h-4 text-gray-400" />
+                                <span className="text-gray-400 text-xs font-medium">다음에는 더 노력해보자...</span>
                             </>
                         ) : (
                             <>
-                                <Heart className={`w-5 h-5 text-${endingColor}-400 fill-${endingColor}-400`} />
-                                <span className={`text-${endingColor}-400 font-medium`}>{characters[selectedEnding].name}와 함께한 추억</span>
+                                <Heart className={`w-4 h-4 text-${endingColor}-400 fill-${endingColor}-400`} />
+                                <span className={`text-${endingColor}-400 text-xs font-medium`}>{characters[selectedEnding].name}와 함께한 추억</span>
                             </>
                         )}
                     </div>
@@ -2461,9 +2461,9 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
                     {/* Back button */}
                     <button
                         onClick={onBack}
-                        className={`w-full px-8 py-4 bg-gradient-to-r ${gradientColors} text-white rounded-full text-lg font-bold shadow-lg hover:scale-105 transition-transform flex items-center justify-center gap-2`}
+                        className={`w-full px-6 py-3 bg-gradient-to-r ${gradientColors} text-white rounded-full text-sm font-bold shadow-lg hover:scale-105 transition-transform flex items-center justify-center gap-2`}
                     >
-                        <Home className="w-5 h-5" /> 메인으로 돌아가기
+                        <Home className="w-4 h-4" /> 메인으로 돌아가기
                     </button>
                 </div>
             </div>
@@ -2482,31 +2482,14 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent" />
             </div>
 
-            {/* Boy Character - Always on Right */}
-            <div className="absolute bottom-32 right-2 z-10">
-                <img
-                    src={boyImg}
-                    alt="주인공"
-                    className="h-[350px] w-auto object-contain filter drop-shadow-2xl"
-                />
-            </div>
+            {/* Boy Character - Removed here, moved to Flex container below to align with dialogue box */}
 
-            {/* Girl Character - On Left when speaking */}
-            {currentGirl && currentDialogue.speaker !== 'narration' && currentDialogue.speaker !== 'quiz' &&
-                currentDialogue.speaker !== 'choice' && currentDialogue.speaker !== 'finalChoice' && (
-                    <div className="absolute bottom-32 left-2 z-10">
-                        <img
-                            src={characters[currentGirl].image}
-                            alt={characters[currentGirl].name}
-                            className="h-[350px] w-auto object-contain filter drop-shadow-2xl"
-                        />
-                    </div>
-                )}
+            {/* Girl Character - Removed here, moved to Flex container below */}
 
             {/* Top Stats */}
             <div className="absolute top-4 left-4 z-30">
-                <button onClick={onBack} className="flex items-center gap-2 text-gray-300 hover:text-white bg-slate-800/70 backdrop-blur px-4 py-2 rounded-full border border-slate-600/50 transition-all">
-                    <ArrowLeft className="w-4 h-4" /> 돌아가기
+                <button onClick={onBack} className="flex items-center gap-1 text-gray-300 hover:text-white bg-slate-800/70 backdrop-blur px-3 py-1.5 rounded-full border border-slate-600/50 transition-all text-xs">
+                    <ArrowLeft className="w-3 h-3" /> 돌아가기
                 </button>
             </div>
             <div className="absolute top-4 right-4 z-30 flex items-center gap-2">
@@ -2521,131 +2504,148 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
                 )}
             </div>
 
-            {/* Dialogue Box */}
-            <div className="absolute bottom-0 left-0 right-0 z-20">
-                <div className="relative mx-3 mb-12 overflow-hidden rounded-t-xl">
-                    {/* White semi-transparent background */}
-                    <div className="absolute inset-0 bg-white/25 backdrop-blur-md rounded-t-xl" />
+            {/* Characters and Dialogue Flex Container */}
+            <div className="absolute bottom-0 left-0 right-0 z-20 flex flex-col justify-end pointer-events-none">
 
-                    <div className="relative p-4">
-                        {currentDialogue.speaker !== 'narration' && currentDialogue.speaker !== 'quiz' &&
-                            currentDialogue.speaker !== 'choice' && currentDialogue.speaker !== 'finalChoice' && currentGirl && (
-                                <div className="mb-2">
-                                    <span className={`inline-block px-3 py-1 rounded-lg text-sm text-white font-bold ${currentGirl === 'girl1' ? 'bg-pink-500/80' : 'bg-purple-500/80'
-                                        }`}>
-                                        {characters[currentGirl].name}
-                                    </span>
-                                </div>
+                {/* Characters Container */}
+                <div className="flex items-end justify-between px-0 w-full -mb-6 relative z-10">
+                    {/* Girl (Left) */}
+                    <div className="flex-1 flex justify-start">
+                        {currentGirl && currentDialogue.speaker !== 'narration' && currentDialogue.speaker !== 'quiz' &&
+                            currentDialogue.speaker !== 'choice' && currentDialogue.speaker !== 'finalChoice' && (
+                                <img
+                                    src={characters[currentGirl].image}
+                                    alt={characters[currentGirl].name}
+                                    className="h-[350px] w-auto object-contain filter drop-shadow-2xl transition-all duration-300"
+                                />
                             )}
+                    </div>
 
-                        {/* Quiz */}
-                        {currentDialogue.speaker === 'quiz' && (
-                            <div>
-                                <div className="text-white text-base mb-4">{currentDialogue.question}</div>
-                                <div className="grid grid-cols-2 gap-2">
-                                    {currentDialogue.options.map((option, idx) => (
-                                        <button
-                                            key={idx}
-                                            onClick={() => handleQuizAnswer(idx)}
-                                            disabled={quizAnswer !== null}
-                                            className={`p-3 rounded-lg text-sm font-bold transition-all ${quizAnswer !== null
-                                                ? idx === currentDialogue.correct
-                                                    ? 'bg-green-500/80 text-white'
-                                                    : 'bg-slate-600/50 text-gray-400'
-                                                : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
-                                                }`}
-                                        >
-                                            {option}
-                                        </button>
-                                    ))}
-                                </div>
-                                {quizAnswer && (
-                                    <div className={`mt-3 text-center text-base font-bold ${quizAnswer === 'correct' ? 'text-green-400' : 'text-red-400'}`}>
-                                        {quizAnswer === 'correct' ? '✓ 정답!' : '✗ 아쉬워요...'}
-                                    </div>
-                                )}
-                            </div>
-                        )}
-
-                        {/* Choice */}
-                        {currentDialogue.speaker === 'choice' && (
-                            <div>
-                                <div className="text-white text-base mb-4">{currentDialogue.question}</div>
-                                <div className="space-y-2">
-                                    {currentDialogue.options.map((option, idx) => (
-                                        <button
-                                            key={idx}
-                                            onClick={() => handleChoice(idx)}
-                                            className="w-full p-3 rounded-lg text-sm font-medium bg-white/10 text-white hover:bg-white/20 border border-white/20 transition-all text-left"
-                                        >
-                                            ▸ {option}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Final Choice */}
-                        {currentDialogue.speaker === 'finalChoice' && (
-                            <div>
-                                <div className="text-center mb-4">
-                                    <Users className="w-10 h-10 text-pink-400 mx-auto mb-2" />
-                                    <div className="text-white text-base">{currentDialogue.question}</div>
-                                </div>
-                                <div className="grid grid-cols-3 gap-2">
-                                    {currentDialogue.options.map((option, idx) => {
-                                        const girlKey = ['girl1', 'girl2', 'girl3'][idx];
-                                        const bgColors = ['bg-pink-500/30 hover:bg-pink-500/50 border-pink-400/50 text-pink-300', 'bg-purple-500/30 hover:bg-purple-500/50 border-purple-400/50 text-purple-300', 'bg-amber-500/30 hover:bg-amber-500/50 border-amber-400/50 text-amber-300'];
-                                        return (
-                                            <button
-                                                key={idx}
-                                                onClick={() => handleFinalChoice(idx)}
-                                                className={`p-2 rounded-lg text-xs font-bold transition-all text-center border-2 ${bgColors[idx]}`}
-                                            >
-                                                <img
-                                                    src={characters[girlKey].image}
-                                                    alt={option}
-                                                    className="w-16 h-20 object-cover rounded-lg mx-auto mb-1 border border-white/20"
-                                                />
-                                                {option}
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Regular dialogue */}
-                        {currentDialogue.speaker !== 'quiz' && currentDialogue.speaker !== 'choice' && currentDialogue.speaker !== 'finalChoice' && (
-                            <div onClick={handleNext} className="cursor-pointer">
-                                <p className={`text-white text-sm leading-relaxed mb-2 transition-opacity ${textRevealed ? 'opacity-100' : 'opacity-0'}`}>
-                                    {currentDialogue.text}
-                                </p>
-                                {currentDialogue.textJp && (
-                                    <p className={`text-pink-300/70 text-xs transition-opacity ${textRevealed ? 'opacity-100' : 'opacity-0'}`}>
-                                        {currentDialogue.textJp}
-                                    </p>
-                                )}
-                                <div className="absolute bottom-3 right-4 flex items-center gap-0.5 text-pink-300/60 animate-pulse">
-                                    <ChevronRight className="w-4 h-4" />
-                                    <ChevronRight className="w-4 h-4 -ml-2" />
-                                </div>
-                            </div>
-                        )}
+                    {/* Boy (Right) */}
+                    <div className="flex-1 flex justify-end">
+                        <img
+                            src={boyImg}
+                            alt="주인공"
+                            className="h-[350px] w-auto object-contain filter drop-shadow-2xl transition-all duration-300"
+                        />
                     </div>
                 </div>
 
-                {/* Bottom Menu */}
-                <div className="absolute bottom-0 left-0 right-0 bg-slate-900/90 backdrop-blur border-t border-slate-700/50">
-                    <div className="flex items-center justify-center gap-1 py-2 px-4 text-xs">
-                        <MenuBarButton icon={Save} label="SAVE" />
-                        <MenuBarButton icon={Download} label="LOAD" />
-                        <MenuBarButton icon={FastForward} label="SKIP" />
-                        <MenuBarButton icon={PlayCircle} label="AUTO" active={autoPlay} onClick={() => setAutoPlay(!autoPlay)} />
-                        <MenuBarButton icon={ScrollText} label="LOG" />
-                        <MenuBarButton icon={Maximize} label="SCREEN" />
-                        <MenuBarButton icon={Home} label="TITLE" onClick={onBack} />
+                {/* Dialogue Box */}
+                <div className="w-full pb-8 px-3 pointer-events-auto relative z-20">
+                    <div className="relative overflow-hidden rounded-2xl shadow-lg border border-white/20">
+                        {/* White semi-transparent background */}
+                        <div className="absolute inset-0 bg-white/25 backdrop-blur-md" />
+
+                        <div className="relative p-4 min-h-[140px] flex flex-col justify-center">
+                            {currentDialogue.speaker !== 'narration' && currentDialogue.speaker !== 'quiz' &&
+                                currentDialogue.speaker !== 'choice' && currentDialogue.speaker !== 'finalChoice' && currentGirl && (
+                                    <div className="mb-2">
+                                        <span className={`inline-block px-3 py-1 rounded-lg text-sm text-white font-bold ${currentGirl === 'girl1' ? 'bg-pink-500/80' : 'bg-purple-500/80'
+                                            }`}>
+                                            {characters[currentGirl].name}
+                                        </span>
+                                    </div>
+                                )}
+
+                            {/* Quiz */}
+                            {currentDialogue.speaker === 'quiz' && (
+                                <div>
+                                    <div className="text-white text-base mb-4">{currentDialogue.question}</div>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {currentDialogue.options.map((option, idx) => (
+                                            <button
+                                                key={idx}
+                                                onClick={() => handleQuizAnswer(idx)}
+                                                disabled={quizAnswer !== null}
+                                                className={`p-3 rounded-lg text-sm font-bold transition-all ${quizAnswer !== null
+                                                    ? idx === currentDialogue.correct
+                                                        ? 'bg-green-500/80 text-white'
+                                                        : 'bg-slate-600/50 text-gray-400'
+                                                    : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
+                                                    }`}
+                                            >
+                                                {option}
+                                            </button>
+                                        ))}
+                                    </div>
+                                    {quizAnswer && (
+                                        <div className={`mt-3 text-center text-base font-bold ${quizAnswer === 'correct' ? 'text-green-400' : 'text-red-400'}`}>
+                                            {quizAnswer === 'correct' ? '✓ 정답!' : '✗ 아쉬워요...'}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Choice */}
+                            {currentDialogue.speaker === 'choice' && (
+                                <div>
+                                    <div className="text-white text-base mb-4">{currentDialogue.question}</div>
+                                    <div className="space-y-2">
+                                        {currentDialogue.options.map((option, idx) => (
+                                            <button
+                                                key={idx}
+                                                onClick={() => handleChoice(idx)}
+                                                className="w-full p-3 rounded-lg text-sm font-medium bg-white/10 text-white hover:bg-white/20 border border-white/20 transition-all text-left"
+                                            >
+                                                ▸ {option}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Final Choice */}
+                            {currentDialogue.speaker === 'finalChoice' && (
+                                <div>
+                                    <div className="text-center mb-4">
+                                        <Users className="w-10 h-10 text-pink-400 mx-auto mb-2" />
+                                        <div className="text-white text-base">{currentDialogue.question}</div>
+                                    </div>
+                                    <div className="grid grid-cols-3 gap-2">
+                                        {currentDialogue.options.map((option, idx) => {
+                                            const girlKey = ['girl1', 'girl2', 'girl3'][idx];
+                                            const bgColors = ['bg-pink-500/30 hover:bg-pink-500/50 border-pink-400/50 text-pink-300', 'bg-purple-500/30 hover:bg-purple-500/50 border-purple-400/50 text-purple-300', 'bg-amber-500/30 hover:bg-amber-500/50 border-amber-400/50 text-amber-300'];
+                                            return (
+                                                <button
+                                                    key={idx}
+                                                    onClick={() => handleFinalChoice(idx)}
+                                                    className={`p-2 rounded-lg text-xs font-bold transition-all text-center border-2 ${bgColors[idx]}`}
+                                                >
+                                                    <img
+                                                        src={characters[girlKey].image}
+                                                        alt={option}
+                                                        className="w-16 h-20 object-cover rounded-lg mx-auto mb-1 border border-white/20"
+                                                    />
+                                                    {option}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Regular dialogue */}
+                            {currentDialogue.speaker !== 'quiz' && currentDialogue.speaker !== 'choice' && currentDialogue.speaker !== 'finalChoice' && (
+                                <div onClick={handleNext} className="cursor-pointer">
+                                    <p className={`text-white text-sm leading-relaxed mb-2 transition-opacity ${textRevealed ? 'opacity-100' : 'opacity-0'}`}>
+                                        {currentDialogue.text}
+                                    </p>
+                                    {currentDialogue.textJp && (
+                                        <p className={`text-pink-300/70 text-xs transition-opacity ${textRevealed ? 'opacity-100' : 'opacity-0'}`}>
+                                            {currentDialogue.textJp}
+                                        </p>
+                                    )}
+                                    <div className="absolute bottom-3 right-4 flex items-center gap-0.5 text-pink-300/60 animate-pulse">
+                                        <ChevronRight className="w-4 h-4" />
+                                        <ChevronRight className="w-4 h-4 -ml-2" />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
+
+                    {/* Bottom Menu Removed */}
                 </div>
             </div>
         </div>
@@ -2782,7 +2782,7 @@ function TrainingMode({ learnedWords, setLearnedWords, wrongWords, setWrongWords
             const percentScore = Math.round((score / quiz.length) * 100);
 
             return (
-                <div className="min-h-screen relative">
+                <div className="h-screen relative overflow-hidden">
                     {/* Background */}
                     <div
                         className="absolute inset-0 bg-cover bg-center"
@@ -2791,41 +2791,41 @@ function TrainingMode({ learnedWords, setLearnedWords, wrongWords, setWrongWords
                         <div className="absolute inset-0 bg-slate-900/70" />
                     </div>
 
-                    <div className="relative z-10 min-h-screen flex items-center justify-center p-6">
-                        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 text-center max-w-md w-full border border-white/20 shadow-2xl">
+                    <div className="relative z-10 h-full flex items-center justify-center p-4">
+                        <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 text-center max-w-sm w-full border border-white/20 shadow-2xl">
                             {/* Score Icon */}
                             {percentScore >= 80 ? (
-                                <Crown className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
+                                <Crown className="w-12 h-12 text-yellow-400 mx-auto mb-3" />
                             ) : percentScore >= 50 ? (
-                                <Star className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
+                                <Star className="w-12 h-12 text-yellow-400 mx-auto mb-3" />
                             ) : (
-                                <BookOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                                <BookOpen className="w-12 h-12 text-gray-400 mx-auto mb-3" />
                             )}
 
-                            <h2 className="text-2xl font-bold text-white mb-2">퀴즈 완료!</h2>
-                            <div className={`text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${resultGradient} mb-2`}>
+                            <h2 className="text-xl font-bold text-white mb-2">퀴즈 완료!</h2>
+                            <div className={`text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${resultGradient} mb-2`}>
                                 {score}/{quiz.length}
                             </div>
-                            <p className="text-gray-400 mb-6 flex items-center justify-center gap-2">
+                            <p className="text-gray-400 text-sm mb-6 flex items-center justify-center gap-2">
                                 {percentScore >= 80 ? (
-                                    <><Trophy className="w-5 h-5 text-yellow-400" /> 훌륭해요!</>
+                                    <><Trophy className="w-4 h-4 text-yellow-400" /> 훌륭해요!</>
                                 ) : percentScore >= 50 ? (
-                                    <><ThumbsUp className="w-5 h-5 text-green-400" /> 잘했어요!</>
+                                    <><ThumbsUp className="w-4 h-4 text-green-400" /> 잘했어요!</>
                                 ) : (
-                                    <><Star className="w-5 h-5 text-gray-400" /> 다시 도전해봐요!</>
+                                    <><Star className="w-4 h-4 text-gray-400" /> 다시 도전해봐요!</>
                                 )}
                             </p>
 
-                            <div className="space-y-3">
+                            <div className="space-y-2">
                                 <button
                                     onClick={() => startQuiz(quizType)}
-                                    className={`w-full py-3 bg-gradient-to-r ${resultGradient} text-white rounded-full font-bold hover:scale-105 transition-transform flex items-center justify-center gap-2`}
+                                    className={`w-full py-2.5 bg-gradient-to-r ${resultGradient} text-white text-sm rounded-full font-bold hover:scale-105 transition-transform flex items-center justify-center gap-2`}
                                 >
-                                    <RefreshCw className="w-5 h-5" /> 다시 도전
+                                    <RefreshCw className="w-4 h-4" /> 다시 도전
                                 </button>
                                 <button
                                     onClick={() => setTab('select')}
-                                    className="w-full py-3 bg-white/10 backdrop-blur text-gray-300 rounded-full border border-white/20 hover:bg-white/20 transition-all"
+                                    className="w-full py-2.5 bg-white/10 backdrop-blur text-gray-300 text-sm rounded-full border border-white/20 hover:bg-white/20 transition-all"
                                 >
                                     ← 돌아가기
                                 </button>
@@ -2890,7 +2890,7 @@ function TrainingMode({ learnedWords, setLearnedWords, wrongWords, setWrongWords
                         </div>
 
                         {/* Options */}
-                        <div className="grid grid-cols-2 gap-4 max-w-lg w-full">
+                        <div className="grid grid-cols-2 gap-2 max-w-sm w-full">
                             {currentQ?.options.map((option, idx) => {
                                 const isCorrect = option === currentQ.correct;
                                 const isSelected = selectedAnswer === option;
@@ -2912,10 +2912,10 @@ function TrainingMode({ learnedWords, setLearnedWords, wrongWords, setWrongWords
                                         key={idx}
                                         onClick={() => handleAnswer(option)}
                                         disabled={selectedAnswer !== null}
-                                        className={`p-5 rounded-2xl text-xl font-bold transition-all transform hover:scale-105 ${buttonClass}`}
+                                        className={`p-3 rounded-xl text-base font-bold transition-all transform hover:scale-105 ${buttonClass}`}
                                     >
-                                        {showResult && isCorrect && <span className="mr-2">✓</span>}
-                                        {showResult && isSelected && !isCorrect && <span className="mr-2">✗</span>}
+                                        {showResult && isCorrect && <span className="mr-1">✓</span>}
+                                        {showResult && isSelected && !isCorrect && <span className="mr-1">✗</span>}
                                         {option}
                                     </button>
                                 );
