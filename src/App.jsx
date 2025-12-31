@@ -2591,37 +2591,7 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
         ? selectedEnding
         : stage?.girl;
 
-    // Track if ranking has been submitted for this ending
-    const [hasSubmittedRanking, setHasSubmittedRanking] = useState(false);
 
-    // Auto-submit ranking when ending screen is shown
-    useEffect(() => {
-        const submitRanking = async () => {
-            if (currentDialogue?.speaker === 'ending' && playerName && !hasSubmittedRanking) {
-                try {
-                    const totalScore = affection.girl1 + affection.girl2 + affection.girl3;
-                    await fetch(`${API_URL}/rankings`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            name: playerName,
-                            score: totalScore,
-                            girl1: affection.girl1,
-                            girl2: affection.girl2,
-                            girl3: affection.girl3,
-                            selectedEnding: selectedEnding,
-                            isSadEnding: isSadEnding
-                        })
-                    });
-                    setHasSubmittedRanking(true);
-                    console.log('Ranking submitted successfully!');
-                } catch (error) {
-                    console.error('Error submitting ranking:', error);
-                }
-            }
-        };
-        submitRanking();
-    }, [currentDialogue, playerName, hasSubmittedRanking, affection, selectedEnding, isSadEnding]);
 
     useEffect(() => {
         setTextRevealed(false);
@@ -3898,29 +3868,62 @@ function Ranking({ playerName, affection, onBack }) {
 
     const totalScore = affection.girl1 + affection.girl2 + affection.girl3;
 
-    // Fetch rankings from API
-    useEffect(() => {
-        const fetchRankings = async () => {
-            try {
-                const response = await fetch(`${API_URL}/rankings?limit=100`);
-                const rankingData = await response.json();
+    const [isRegistering, setIsRegistering] = useState(false);
 
-                setRankings(rankingData);
+    // Fetch rankings (reusable function)
+    const fetchRankings = async () => {
+        setLoading(true);
+        try {
+            const response = await fetch(`${API_URL}/rankings?limit=100`);
+            const rankingData = await response.json();
 
-                // Find my rank
-                const myIndex = rankingData.findIndex(r => r.name === playerName && r.score === totalScore);
-                if (myIndex !== -1) {
-                    setMyRank(myIndex + 1);
-                }
-            } catch (error) {
-                console.error('Error fetching rankings:', error);
-            } finally {
-                setLoading(false);
+            setRankings(rankingData);
+
+            // Find my rank
+            const myIndex = rankingData.findIndex(r => r.name === playerName && r.score === totalScore);
+            if (myIndex !== -1) {
+                setMyRank(myIndex + 1);
             }
-        };
+        } catch (error) {
+            console.error('Error fetching rankings:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    // Initial fetch
+    useEffect(() => {
         fetchRankings();
-    }, [playerName, totalScore]);
+    }, []);
+
+    // Handle manual ranking registration
+    const handleRegisterRanking = async () => {
+        if (isRegistering) return;
+        setIsRegistering(true);
+
+        try {
+            await fetch(`${API_URL}/rankings`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: playerName,
+                    score: totalScore,
+                    girl1: affection.girl1,
+                    girl2: affection.girl2,
+                    girl3: affection.girl3
+                })
+            });
+
+            // Refresh rankings after submission
+            await fetchRankings();
+            alert('랭킹에 등록되었습니다!');
+        } catch (error) {
+            console.error('Error registering ranking:', error);
+            alert('랭킹 등록에 실패했습니다.');
+        } finally {
+            setIsRegistering(false);
+        }
+    };
 
     const getRankColor = (rank) => {
         if (rank === 1) return 'from-yellow-400 to-amber-500';
@@ -3990,13 +3993,33 @@ function Ranking({ playerName, affection, onBack }) {
                         </div>
                     </div>
 
-                    {/* Show my rank if found */}
-                    {myRank && (
-                        <div className="mt-4 text-center p-3 bg-gradient-to-r from-pink-500/20 to-purple-500/20 rounded-xl border border-pink-500/30">
-                            <span className="text-pink-400 text-sm">현재 순위: </span>
-                            <span className="text-white font-bold text-lg">{myRank}위</span>
-                        </div>
-                    )}
+                    {/* Register Button or Rank Display */}
+                    <div className="mt-4">
+                        {myRank ? (
+                            <div className="text-center p-3 bg-pink-500/20 rounded-xl border border-pink-500/30">
+                                <span className="text-pink-400 text-sm">현재 순위: </span>
+                                <span className="text-white font-bold text-lg">{myRank}위</span>
+                            </div>
+                        ) : (
+                            <button
+                                onClick={handleRegisterRanking}
+                                disabled={isRegistering}
+                                className="w-full py-3 bg-gradient-to-r from-pink-500 to-purple-600 rounded-xl font-bold text-white shadow-lg shadow-pink-500/30 active:scale-95 transition-all flex items-center justify-center gap-2"
+                            >
+                                {isRegistering ? (
+                                    <>
+                                        <RefreshCw className="w-4 h-4 animate-spin" />
+                                        등록 중...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Trophy className="w-4 h-4" />
+                                        내 점수 랭킹에 등록하기
+                                    </>
+                                )}
+                            </button>
+                        )}
+                    </div>
                 </div>
 
                 {/* Rankings List */}
