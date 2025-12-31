@@ -1,7 +1,7 @@
 //수정
 import React, { useState, useEffect } from 'react';
 import { db } from './firebase';
-import { collection, addDoc, query, orderBy, limit, getDocs, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, query, orderBy, limit, getDocs, serverTimestamp, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import {
     Heart,
     Zap,
@@ -2050,8 +2050,8 @@ export default function KoibenApp() {
     const [playerName, setPlayerName] = useState('');
 
     const [selectedEnding, setSelectedEnding] = useState(null);
-    const [completedEnding, setCompletedEnding] = useState(null); // Track which ending player has completed
     const [showPremium, setShowPremium] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleStart = () => {
         if (!playerName) {
@@ -2061,23 +2061,80 @@ export default function KoibenApp() {
         }
     };
 
-    const handleNameSubmit = (name) => {
-        setPlayerName(name);
-        setCurrentScreen('main');
+    const handleNameSubmit = async (name) => {
+        setIsLoading(true);
+
+        try {
+            const userDocRef = doc(db, 'users', name);
+            const userDoc = await getDoc(userDocRef);
+
+            if (userDoc.exists()) {
+                // 기존 사용자 - 저장된 데이터 로드
+                const data = userDoc.data();
+                setUnlockedStage(data.unlockedStage || 0);
+                setCurrentStage(data.currentStage || 0);
+                setAffection(data.affection || { girl1: 0, girl2: 0, girl3: 0 });
+                setLearnedWords(data.learnedWords || []);
+                setEnergy(data.energy || 5);
+                console.log('기존 사용자 데이터 로드:', name);
+            } else {
+                // 신규 사용자 - 새 문서 생성
+                await setDoc(userDocRef, {
+                    name,
+                    currentStage: 0,
+                    unlockedStage: 0,
+                    affection: { girl1: 0, girl2: 0, girl3: 0 },
+                    learnedWords: [],
+                    energy: 5,
+                    createdAt: serverTimestamp()
+                });
+                console.log('신규 사용자 생성:', name);
+            }
+
+            setPlayerName(name);
+            setCurrentScreen('main');
+        } catch (error) {
+            console.error('로그인 오류:', error);
+            // 오류 발생시에도 진행 허용
+            setPlayerName(name);
+            setCurrentScreen('main');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
-    const handleStageComplete = (newAffection) => {
-        setAffection(prev => ({
-            girl1: prev.girl1 + (newAffection.girl1 || 0),
-            girl2: prev.girl2 + (newAffection.girl2 || 0),
-            girl3: prev.girl3 + (newAffection.girl3 || 0),
-        }));
+    const handleStageComplete = async (newAffection) => {
+        const updatedAffection = {
+            girl1: affection.girl1 + (newAffection.girl1 || 0),
+            girl2: affection.girl2 + (newAffection.girl2 || 0),
+            girl3: affection.girl3 + (newAffection.girl3 || 0),
+        };
+        setAffection(updatedAffection);
+
+        let nextStage = currentStage;
+        let newUnlockedStage = unlockedStage;
 
         if (currentStage < 4) {
-            const nextStage = currentStage + 1;
+            nextStage = currentStage + 1;
+            newUnlockedStage = Math.max(unlockedStage, nextStage);
             setCurrentStage(nextStage);
-            // Unlock next stage
-            setUnlockedStage(prev => Math.max(prev, nextStage));
+            setUnlockedStage(newUnlockedStage);
+        }
+
+        // Firebase에 진행 상황 저장
+        if (playerName) {
+            try {
+                await updateDoc(doc(db, 'users', playerName), {
+                    currentStage: nextStage,
+                    unlockedStage: newUnlockedStage,
+                    affection: updatedAffection,
+                    learnedWords: learnedWords,
+                    updatedAt: serverTimestamp()
+                });
+                console.log('진행 상황 저장 완료');
+            } catch (error) {
+                console.error('진행 상황 저장 오류:', error);
+            }
         }
     };
 
@@ -2088,7 +2145,7 @@ export default function KoibenApp() {
             )}
 
             {currentScreen === 'nameInput' && (
-                <NameInputScreen onConfirm={handleNameSubmit} />
+                <NameInputScreen onConfirm={handleNameSubmit} isLoading={isLoading} />
             )}
 
             {currentScreen === 'main' && (
@@ -2111,8 +2168,6 @@ export default function KoibenApp() {
                     onBack={() => setCurrentScreen('main')}
                     selectedEnding={selectedEnding}
                     setSelectedEnding={setSelectedEnding}
-                    completedEnding={completedEnding}
-                    setCompletedEnding={setCompletedEnding}
                     setShowPremium={setShowPremium}
                     playerName={playerName}
                 />
@@ -2255,26 +2310,22 @@ function StageSelect({ unlockedStage, onSelectStage, onBack }) {
     );
 }
 
-function NameInputScreen({ onConfirm }) {
+function NameInputScreen({ onConfirm, isLoading }) {
     const [inputName, setInputName] = useState('');
-    const [isAnimating, setIsAnimating] = useState(false);
 
     const handleSubmit = () => {
-        if (!inputName.trim()) return;
-        setIsAnimating(true);
-        setTimeout(() => {
-            onConfirm(inputName);
-        }, 800);
+        if (!inputName.trim() || isLoading) return;
+        onConfirm(inputName);
     };
 
     return (
-        <div className={`w-full h-screen relative flex flex-col items-center justify-center overflow-hidden transition-opacity duration-1000 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
+        <div className="w-full h-screen relative flex flex-col items-center justify-center overflow-hidden">
             {/* Background */}
             <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${bgSchool})` }} />
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
 
             <div className="relative z-10 w-full max-w-md p-8 flex flex-col items-center">
-                <h2 className="w-full text-lg font-bold text-white mb-8 text-center">
+                <h2 className="text-lg font-bold text-white mb-8 text-center">
                     당신의 이름을 알려주세요
                 </h2>
 
@@ -2285,7 +2336,8 @@ function NameInputScreen({ onConfirm }) {
                         onChange={(e) => setInputName(e.target.value)}
                         placeholder="이름 입력"
                         maxLength={8}
-                        className="w-full bg-transparent border-b-2 border-white/30 py-3 text-center text-2xl text-white placeholder-white/30 focus:outline-none focus:border-pink-500 transition-colors"
+                        disabled={isLoading}
+                        className="w-full bg-transparent border-b-2 border-white/30 py-3 text-center text-2xl text-white placeholder-white/30 focus:outline-none focus:border-pink-500 transition-colors disabled:opacity-50"
                         onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
                     />
                     <div className="absolute bottom-0 left-0 w-full h-0.5 bg-pink-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
@@ -2293,14 +2345,25 @@ function NameInputScreen({ onConfirm }) {
 
                 <button
                     onClick={handleSubmit}
-                    disabled={!inputName.trim()}
-                    className={`px-10 py-3 rounded-full font-bold transition-all duration-300 ${inputName.trim()
+                    disabled={!inputName.trim() || isLoading}
+                    className={`px-10 py-3 rounded-full font-bold transition-all duration-300 ${inputName.trim() && !isLoading
                         ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg shadow-pink-500/30 hover:scale-105'
                         : 'bg-white/10 text-white/30 cursor-not-allowed'
                         }`}
                 >
                     시작하기
                 </button>
+
+                {/* Loading Status Box */}
+                {isLoading && (
+                    <div className="mt-8 flex flex-col items-center gap-3 p-4 bg-slate-800/70 backdrop-blur-xl rounded-2xl border border-pink-500/30 shadow-lg animate-pulse">
+                        <RefreshCw className="w-6 h-6 text-pink-400 animate-spin" />
+                        <div className="text-center">
+                            <p className="text-white font-medium">데이터 불러오는 중...</p>
+                            <p className="text-gray-400 text-sm mt-1">잠시만 기다려주세요</p>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
@@ -2345,7 +2408,7 @@ function TitleScreen({ onStart }) {
                         <Heart className="w-6 h-6 text-purple-400 fill-purple-400" />
                     </div>
                     <h2 className="text-xl text-pink-300/80 tracking-widest mb-2">KOIBEN</h2>
-                    <p className="text-gray-400 text-sm">일본어 학습 연애 시뮬레이션</p>
+                    <p className="text-gray-400 text-sm">~ 사랑하며 배우는 일본어 ~</p>
                 </div>
 
                 {/* Start Button */}
@@ -2620,12 +2683,9 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
     const handleFinalChoice = (index) => {
         const choices = ['girl1', 'girl2', 'girl3'];
         const chosenGirl = choices[index];
+        const girlAffection = affection[chosenGirl] || 0;
 
-        // If player already completed an ending, force that ending
-        const finalGirl = completedEnding || chosenGirl;
-        const girlAffection = affection[finalGirl] || 0;
-
-        // Affection-based ending determination
+        // Option 3: Affection-based ending determination
         // 80%+ = guaranteed happy ending
         // Below 30% = guaranteed sad ending
         // 30-80% = probability based on affection
@@ -2637,19 +2697,15 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
             isHappyEnding = false;
         } else {
             // 30-80%: Calculate probability
-            const probability = (girlAffection - 30) / 50;
+            // affection 30 = 0% chance, affection 80 = 100% chance
+            const probability = (girlAffection - 30) / 50; // 0.0 to 1.0
             isHappyEnding = Math.random() < probability;
         }
 
-        setSelectedEnding(finalGirl);
+        setSelectedEnding(chosenGirl);
         setIsSadEnding(!isHappyEnding);
         setInEnding(true);
         setDialogueIndex(0);
-
-        // Mark this ending as completed (locks future choices)
-        if (!completedEnding) {
-            setCompletedEnding(finalGirl);
-        }
     };
 
     if (!currentDialogue) {
@@ -2964,40 +3020,23 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
                                     <div className="text-center mb-4">
                                         <Users className="w-10 h-10 text-pink-400 mx-auto mb-2" />
                                         <div className="text-white text-base">{currentDialogue.question}</div>
-                                        {completedEnding && (
-                                            <div className="text-xs text-pink-400 mt-2">
-                                                💝 이미 {characters[completedEnding].name} 엔딩을 완료했습니다
-                                            </div>
-                                        )}
                                     </div>
                                     <div className="grid grid-cols-3 gap-2">
                                         {currentDialogue.options.map((option, idx) => {
                                             const girlKey = ['girl1', 'girl2', 'girl3'][idx];
-                                            const isLocked = completedEnding && completedEnding !== girlKey;
                                             const bgColors = ['bg-pink-500/30 hover:bg-pink-500/50 border-pink-400/50 text-pink-300', 'bg-purple-500/30 hover:bg-purple-500/50 border-purple-400/50 text-purple-300', 'bg-amber-500/30 hover:bg-amber-500/50 border-amber-400/50 text-amber-300'];
-                                            const lockedStyle = 'bg-gray-700/50 border-gray-600/50 text-gray-500 cursor-not-allowed opacity-50';
-
                                             return (
                                                 <button
                                                     key={idx}
-                                                    onClick={() => !isLocked && handleFinalChoice(idx)}
-                                                    disabled={isLocked}
-                                                    className={`p-2 rounded-lg text-xs font-bold transition-all text-center border-2 ${isLocked ? lockedStyle : bgColors[idx]}`}
+                                                    onClick={() => handleFinalChoice(idx)}
+                                                    className={`p-2 rounded-lg text-xs font-bold transition-all text-center border-2 ${bgColors[idx]}`}
                                                 >
-                                                    <div className="relative">
-                                                        <img
-                                                            src={characters[girlKey].image}
-                                                            alt={option}
-                                                            className={`w-16 h-20 object-cover rounded-lg mx-auto mb-1 border border-white/20 ${isLocked ? 'grayscale' : ''}`}
-                                                        />
-                                                        {isLocked && (
-                                                            <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-lg">
-                                                                <span className="text-2xl">🔒</span>
-                                                            </div>
-                                                        )}
-                                                    </div>
+                                                    <img
+                                                        src={characters[girlKey].image}
+                                                        alt={option}
+                                                        className="w-16 h-20 object-cover rounded-lg mx-auto mb-1 border border-white/20"
+                                                    />
                                                     {option}
-                                                    {isLocked && <div className="text-[10px] mt-1">잠금됨</div>}
                                                 </button>
                                             );
                                         })}
@@ -3974,8 +4013,14 @@ function Ranking({ playerName, affection, onBack }) {
                     </div>
 
                     {loading ? (
-                        <div className="flex items-center justify-center h-40">
-                            <RefreshCw className="w-8 h-8 text-pink-400 animate-spin" />
+                        <div className="flex flex-col items-center justify-center py-10 gap-4">
+                            <div className="p-4 bg-slate-800/70 backdrop-blur-xl rounded-2xl border border-pink-500/30">
+                                <RefreshCw className="w-8 h-8 text-pink-400 animate-spin" />
+                            </div>
+                            <div className="text-center">
+                                <p className="text-white font-medium">랭킹 불러오는 중...</p>
+                                <p className="text-gray-400 text-sm mt-1">잠시만 기다려주세요</p>
+                            </div>
                         </div>
                     ) : rankings.length === 0 ? (
                         <div className="text-center py-10">
