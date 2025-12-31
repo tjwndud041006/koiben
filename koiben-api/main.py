@@ -16,13 +16,18 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Koiben API", lifespan=lifespan)
 
 # CORS 설정
+# CORS 설정
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:5174", "http://127.0.0.1:5173"],
+    allow_origins=["*"],  # 모든 도메인 허용 (배포 환경 호환성 위해)
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/")
+async def root():
+    return {"message": "Welcome to Koiben API. Visit /docs for API documentation."}
 
 # =============== 사용자 API ===============
 
