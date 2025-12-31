@@ -1,7 +1,7 @@
 //수정
 import React, { useState, useEffect } from 'react';
-import { db } from './firebase';
-import { collection, addDoc, query, orderBy, limit, getDocs, serverTimestamp, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+
+const API_URL = 'https://koiben.onrender.com';
 import {
     Heart,
     Zap,
@@ -2065,30 +2065,24 @@ export default function KoibenApp() {
         setIsLoading(true);
 
         try {
-            const userDocRef = doc(db, 'users', name);
-            const userDoc = await getDoc(userDocRef);
+            const response = await fetch(`${API_URL}/users`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name })
+            });
 
-            if (userDoc.exists()) {
+            const data = await response.json();
+
+            if (data.isNew) {
+                console.log('신규 사용자 생성:', name);
+            } else {
                 // 기존 사용자 - 저장된 데이터 로드
-                const data = userDoc.data();
                 setUnlockedStage(data.unlockedStage || 0);
                 setCurrentStage(data.currentStage || 0);
                 setAffection(data.affection || { girl1: 0, girl2: 0, girl3: 0 });
                 setLearnedWords(data.learnedWords || []);
                 setEnergy(data.energy || 5);
                 console.log('기존 사용자 데이터 로드:', name);
-            } else {
-                // 신규 사용자 - 새 문서 생성
-                await setDoc(userDocRef, {
-                    name,
-                    currentStage: 0,
-                    unlockedStage: 0,
-                    affection: { girl1: 0, girl2: 0, girl3: 0 },
-                    learnedWords: [],
-                    energy: 5,
-                    createdAt: serverTimestamp()
-                });
-                console.log('신규 사용자 생성:', name);
             }
 
             setPlayerName(name);
@@ -2121,15 +2115,18 @@ export default function KoibenApp() {
             setUnlockedStage(newUnlockedStage);
         }
 
-        // Firebase에 진행 상황 저장
+        // API로 진행 상황 저장
         if (playerName) {
             try {
-                await updateDoc(doc(db, 'users', playerName), {
-                    currentStage: nextStage,
-                    unlockedStage: newUnlockedStage,
-                    affection: updatedAffection,
-                    learnedWords: learnedWords,
-                    updatedAt: serverTimestamp()
+                await fetch(`${API_URL}/users/${playerName}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        currentStage: nextStage,
+                        unlockedStage: newUnlockedStage,
+                        affection: updatedAffection,
+                        learnedWords: learnedWords
+                    })
                 });
                 console.log('진행 상황 저장 완료');
             } catch (error) {
@@ -2603,15 +2600,18 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
             if (currentDialogue?.speaker === 'ending' && playerName && !hasSubmittedRanking) {
                 try {
                     const totalScore = affection.girl1 + affection.girl2 + affection.girl3;
-                    await addDoc(collection(db, 'rankings'), {
-                        name: playerName,
-                        score: totalScore,
-                        girl1: affection.girl1,
-                        girl2: affection.girl2,
-                        girl3: affection.girl3,
-                        selectedEnding: selectedEnding,
-                        isSadEnding: isSadEnding,
-                        timestamp: serverTimestamp()
+                    await fetch(`${API_URL}/rankings`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            name: playerName,
+                            score: totalScore,
+                            girl1: affection.girl1,
+                            girl2: affection.girl2,
+                            girl3: affection.girl3,
+                            selectedEnding: selectedEnding,
+                            isSadEnding: isSadEnding
+                        })
                     });
                     setHasSubmittedRanking(true);
                     console.log('Ranking submitted successfully!');
@@ -3898,18 +3898,12 @@ function Ranking({ playerName, affection, onBack }) {
 
     const totalScore = affection.girl1 + affection.girl2 + affection.girl3;
 
-    // Fetch rankings from Firebase
+    // Fetch rankings from API
     useEffect(() => {
         const fetchRankings = async () => {
             try {
-                const rankingsRef = collection(db, 'rankings');
-                const q = query(rankingsRef, orderBy('score', 'desc'), limit(100));
-                const querySnapshot = await getDocs(q);
-
-                const rankingData = [];
-                querySnapshot.forEach((doc) => {
-                    rankingData.push({ id: doc.id, ...doc.data() });
-                });
+                const response = await fetch(`${API_URL}/rankings?limit=100`);
+                const rankingData = await response.json();
 
                 setRankings(rankingData);
 
