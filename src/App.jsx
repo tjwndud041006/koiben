@@ -2451,7 +2451,7 @@ function MainMenu({ affection, energy, learnedWords, currentStage, onNavigate })
                 <div className="absolute inset-0 bg-slate-900/70" />
             </div>
 
-            <div className="relative z-10 h-screen flex flex-col p-3 overflow-hidden">
+            <div className="relative z-10 h-screen flex flex-col p-3 overflow-y-auto">
                 {/* Header Stats */}
                 <div className="flex flex-wrap justify-center gap-2 mb-3 mt-12">
                     <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-pink-500/20 border border-pink-400/30">
@@ -3140,7 +3140,7 @@ function PremiumPopup({ onClose }) {
                         </div>
                     </button>
 
-                    <button onClick={onClose} className="mt-4 text-xs text-gray-500 hover:text-gray-300 transition-colors">
+                    <button className="mt-4 text-xs text-gray-500 hover:text-gray-300 transition-colors">
                         구매 복원
                     </button>
                 </div>
