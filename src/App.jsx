@@ -1,5 +1,7 @@
 //수정
 import React, { useState, useEffect } from 'react';
+import { db } from './firebase';
+import { collection, addDoc, query, orderBy, limit, getDocs, serverTimestamp } from 'firebase/firestore';
 import {
     Heart,
     Zap,
@@ -31,7 +33,8 @@ import {
     Clock,
     Shirt,
     Gift,
-    CreditCard
+    CreditCard,
+    Check
 } from 'lucide-react';
 
 // Import assets
@@ -208,6 +211,12 @@ const storyData = {
                     'ありがとう',
                     'さようなら'
                 ],
+                meanings: [
+                    '실례합니다',
+                    '좋은 아침',
+                    '고마워',
+                    '잘 가'
+                ],
                 correct: 0
             },
             {
@@ -248,6 +257,12 @@ const storyData = {
                     'こんにちは',
                     'いただきます'
                 ],
+                meanings: [
+                    '잘 가',
+                    '잘 자',
+                    '안녕하세요',
+                    '잘 먹겠습니다'
+                ],
                 correct: 2
             },
             {
@@ -287,6 +302,12 @@ const storyData = {
                     'ありがとうございます',
                     'おねがいします',
                     'すみません'
+                ],
+                meanings: [
+                    '미안해요',
+                    '고맙습니다',
+                    '부탁합니다',
+                    '실례합니다'
                 ],
                 correct: 1
             },
@@ -371,6 +392,12 @@ const storyData = {
                     'ごめんなさい',
                     'いただきます'
                 ],
+                meanings: [
+                    '처음 뵙겠습니다',
+                    '잘 가',
+                    '미안해요',
+                    '잘 먹겠습니다'
+                ],
                 correct: 0
             },
             {
@@ -408,6 +435,12 @@ const storyData = {
                     'ちょっと...',
                     '関係ない'
                 ],
+                meanings: [
+                    '싫어',
+                    '응, 부탁해!',
+                    '좀...',
+                    '상관없어'
+                ],
                 correct: 1
             },
             {
@@ -444,6 +477,12 @@ const storyData = {
                     'たいいくかん',
                     'としょかん',
                     'しょくどう'
+                ],
+                meanings: [
+                    '교실',
+                    '체육관',
+                    '도서관',
+                    '식당'
                 ],
                 correct: 2
             },
@@ -487,6 +526,12 @@ const storyData = {
                     'おはよう',
                     'さよなら'
                 ],
+                meanings: [
+                    '고마워',
+                    '실례합니다',
+                    '좋은 아침',
+                    '잘 가'
+                ],
                 correct: 0
             },
             {
@@ -523,6 +568,12 @@ const storyData = {
                     'しずかに',
                     'げんきに',
                     'はやく'
+                ],
+                meanings: [
+                    '천천히',
+                    '조용히',
+                    '건강하게',
+                    '빨리'
                 ],
                 correct: 3
             },
@@ -566,6 +617,12 @@ const storyData = {
                     'わからない',
                     'どうでもいい'
                 ],
+                meanings: [
+                    '나도 즐거웠어',
+                    '지루했어',
+                    '모르겠어',
+                    '상관없어'
+                ],
                 correct: 0
             },
             {
@@ -602,6 +659,12 @@ const storyData = {
                     'うん、約束！',
                     '無理',
                     '知らない'
+                ],
+                meanings: [
+                    '싫어',
+                    '응, 약속!',
+                    '무리야',
+                    '몰라'
                 ],
                 correct: 1
             },
@@ -640,6 +703,12 @@ const storyData = {
                     'いただきます',
                     'ごちそうさま'
                 ],
+                meanings: [
+                    '또 봐',
+                    '좋은 아침',
+                    '잘 먹겠습니다',
+                    '잘 먹었습니다'
+                ],
                 correct: 0
             },
             {
@@ -677,6 +746,12 @@ const storyData = {
                     'ドキドキ',
                     'メソメソ'
                 ],
+                meanings: [
+                    '두근두근(설렘)',
+                    '짜증',
+                    '두근두근',
+                    '훌쩍훌쩍'
+                ],
                 correct: 2
             },
             {
@@ -713,6 +788,12 @@ const storyData = {
                     'ふつう',
                     'わからない',
                     'すき'
+                ],
+                meanings: [
+                    '싫어',
+                    '보통이야',
+                    '몰라',
+                    '좋아해'
                 ],
                 correct: 3
             },
@@ -791,6 +872,12 @@ const storyData = {
                     'うん',
                     'いいよ',
                     'まあね'
+                ],
+                meanings: [
+                    '부탁합니다',
+                    '응',
+                    '좋아',
+                    '글쎄'
                 ],
                 correct: 0
             },
@@ -1058,6 +1145,12 @@ const storyData = {
                     '行きたくない',
                     '無理です'
                 ],
+                meanings: [
+                    '같이 갑시다',
+                    '혼자 가세요',
+                    '가고 싶지 않아요',
+                    '무리입니다'
+                ],
                 correct: 0
             },
             {
@@ -1100,6 +1193,12 @@ const storyData = {
                     'きれいです',
                     'つまらない'
                 ],
+                meanings: [
+                    '더러워',
+                    '무서워',
+                    '예뻐요',
+                    '시시해'
+                ],
                 correct: 2
             },
             {
@@ -1137,6 +1236,12 @@ const storyData = {
                     '会いたくない',
                     'さようなら'
                 ],
+                meanings: [
+                    '또 만나요',
+                    '이제 안 만나',
+                    '만나고 싶지 않아',
+                    '잘 가요'
+                ],
                 correct: 0
             },
             {
@@ -1173,6 +1278,12 @@ const storyData = {
                     '普通です',
                     '分かりません',
                     '好きです'
+                ],
+                meanings: [
+                    '싫어해요',
+                    '보통이에요',
+                    '모르겠어요',
+                    '좋아해요'
                 ],
                 correct: 3
             },
@@ -1316,6 +1427,12 @@ const storyData = {
                     '知らない',
                     'どうでもいい'
                 ],
+                meanings: [
+                    '그걸로 할게요',
+                    '필요 없어',
+                    '몰라',
+                    '상관없어'
+                ],
                 correct: 0
             },
             {
@@ -1357,6 +1474,12 @@ const storyData = {
                     'ごめん',
                     'きみも一人じゃん',
                     'うん'
+                ],
+                meanings: [
+                    '그렇네',
+                    '미안',
+                    '너도 혼자잖아',
+                    '응'
                 ],
                 correct: 2
             },
@@ -1521,6 +1644,12 @@ const storyData = {
                     'きもい',
                     'うざい'
                 ],
+                meanings: [
+                    '무서워',
+                    '귀여워',
+                    '기분 나빠',
+                    '짜증나'
+                ],
                 correct: 1
             },
             {
@@ -1563,6 +1692,12 @@ const storyData = {
                     '来たくない',
                     '知らない'
                 ],
+                meanings: [
+                    '또 올게',
+                    '이제 안 와',
+                    '오고 싶지 않아',
+                    '몰라'
+                ],
                 correct: 0
             },
             {
@@ -1599,6 +1734,12 @@ const storyData = {
                     '好き',
                     '普通',
                     '知らない'
+                ],
+                meanings: [
+                    '싫어',
+                    '좋아해',
+                    '보통',
+                    '몰라'
                 ],
                 correct: 1
             },
@@ -1906,7 +2047,24 @@ export default function KoibenApp() {
     const [learnedWords, setLearnedWords] = useState([]);
     const [wrongWords, setWrongWords] = useState([]);
     const [energy, setEnergy] = useState(5);
+    const [playerName, setPlayerName] = useState('');
+
     const [selectedEnding, setSelectedEnding] = useState(null);
+    const [completedEnding, setCompletedEnding] = useState(null); // Track which ending player has completed
+    const [showPremium, setShowPremium] = useState(false);
+
+    const handleStart = () => {
+        if (!playerName) {
+            setCurrentScreen('nameInput');
+        } else {
+            setCurrentScreen('main');
+        }
+    };
+
+    const handleNameSubmit = (name) => {
+        setPlayerName(name);
+        setCurrentScreen('main');
+    };
 
     const handleStageComplete = (newAffection) => {
         setAffection(prev => ({
@@ -1926,7 +2084,11 @@ export default function KoibenApp() {
     return (
         <div className="min-h-screen bg-slate-900 overflow-hidden font-sans">
             {currentScreen === 'title' && (
-                <TitleScreen onStart={() => setCurrentScreen('main')} />
+                <TitleScreen onStart={handleStart} />
+            )}
+
+            {currentScreen === 'nameInput' && (
+                <NameInputScreen onConfirm={handleNameSubmit} />
             )}
 
             {currentScreen === 'main' && (
@@ -1949,6 +2111,10 @@ export default function KoibenApp() {
                     onBack={() => setCurrentScreen('main')}
                     selectedEnding={selectedEnding}
                     setSelectedEnding={setSelectedEnding}
+                    completedEnding={completedEnding}
+                    setCompletedEnding={setCompletedEnding}
+                    setShowPremium={setShowPremium}
+                    playerName={playerName}
                 />
             )}
 
@@ -1972,6 +2138,7 @@ export default function KoibenApp() {
                     energy={energy}
                     setEnergy={setEnergy}
                     onBack={() => setCurrentScreen('main')}
+                    setShowPremium={setShowPremium}
                 />
             )}
 
@@ -1988,6 +2155,19 @@ export default function KoibenApp() {
                 <Store
                     onBack={() => setCurrentScreen('main')}
                 />
+            )}
+
+            {currentScreen === 'ranking' && (
+                <Ranking
+                    playerName={playerName}
+                    affection={affection}
+                    onBack={() => setCurrentScreen('main')}
+                />
+            )}
+
+            {/* Premium Popup - Global */}
+            {showPremium && (
+                <PremiumPopup onClose={() => setShowPremium(false)} />
             )}
         </div>
     );
@@ -2075,6 +2255,57 @@ function StageSelect({ unlockedStage, onSelectStage, onBack }) {
     );
 }
 
+function NameInputScreen({ onConfirm }) {
+    const [inputName, setInputName] = useState('');
+    const [isAnimating, setIsAnimating] = useState(false);
+
+    const handleSubmit = () => {
+        if (!inputName.trim()) return;
+        setIsAnimating(true);
+        setTimeout(() => {
+            onConfirm(inputName);
+        }, 800);
+    };
+
+    return (
+        <div className={`w-full h-screen relative flex flex-col items-center justify-center overflow-hidden transition-opacity duration-1000 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
+            {/* Background */}
+            <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${bgSchool})` }} />
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+
+            <div className="relative z-10 w-full max-w-md p-8 flex flex-col items-center">
+                <h2 className="w-full text-lg font-bold text-white mb-8 text-center">
+                    당신의 이름을 알려주세요
+                </h2>
+
+                <div className="w-full relative group mb-8">
+                    <input
+                        type="text"
+                        value={inputName}
+                        onChange={(e) => setInputName(e.target.value)}
+                        placeholder="이름 입력"
+                        maxLength={8}
+                        className="w-full bg-transparent border-b-2 border-white/30 py-3 text-center text-2xl text-white placeholder-white/30 focus:outline-none focus:border-pink-500 transition-colors"
+                        onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
+                    />
+                    <div className="absolute bottom-0 left-0 w-full h-0.5 bg-pink-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+                </div>
+
+                <button
+                    onClick={handleSubmit}
+                    disabled={!inputName.trim()}
+                    className={`px-10 py-3 rounded-full font-bold transition-all duration-300 ${inputName.trim()
+                        ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg shadow-pink-500/30 hover:scale-105'
+                        : 'bg-white/10 text-white/30 cursor-not-allowed'
+                        }`}
+                >
+                    시작하기
+                </button>
+            </div>
+        </div>
+    );
+}
+
 // Title Screen
 function TitleScreen({ onStart }) {
     const [showStart, setShowStart] = useState(false);
@@ -2114,7 +2345,7 @@ function TitleScreen({ onStart }) {
                         <Heart className="w-6 h-6 text-purple-400 fill-purple-400" />
                     </div>
                     <h2 className="text-xl text-pink-300/80 tracking-widest mb-2">KOIBEN</h2>
-                    <p className="text-gray-400 text-sm">~ 사랑하며 배우는 일본어 ~</p>
+                    <p className="text-gray-400 text-sm">일본어 학습 연애 시뮬레이션</p>
                 </div>
 
                 {/* Start Button */}
@@ -2233,6 +2464,12 @@ function MainMenu({ affection, energy, learnedWords, currentStage, onNavigate })
                             subtitle="아이템 및 패키지 구매"
                             onClick={() => onNavigate('store')}
                         />
+                        <MenuButton
+                            icon={Trophy}
+                            title="랭킹"
+                            subtitle="전체 플레이어 순위"
+                            onClick={() => onNavigate('ranking')}
+                        />
                     </div>
                 </div>
             </div>
@@ -2267,7 +2504,7 @@ function MenuButton({ icon: Icon, title, subtitle, onClick, highlight }) {
 }
 
 // Story Mode
-function StoryMode({ currentStage, affection, setAffection, onStageComplete, setLearnedWords, onBack, selectedEnding, setSelectedEnding }) {
+function StoryMode({ currentStage, affection, setAffection, onStageComplete, setLearnedWords, onBack, selectedEnding, setSelectedEnding, setShowPremium, playerName }) {
     const [dialogueIndex, setDialogueIndex] = useState(0);
     const [quizAnswer, setQuizAnswer] = useState(null);
     const [textRevealed, setTextRevealed] = useState(false);
@@ -2284,9 +2521,44 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
         ? (isSadEnding ? sadEndings[selectedEnding].dialogues : endings[selectedEnding].dialogues)
         : stage?.dialogues || [];
     const currentDialogue = currentDialogues[dialogueIndex];
+
+    // Process text with player name
+    // Process text with player name
+    const processedText = currentDialogue && currentDialogue.text ? currentDialogue.text.replace(/당신/g, playerName ? `${playerName}님` : '당신') : '';
+    const processedTextJp = currentDialogue && currentDialogue.textJp ? currentDialogue.textJp.replace(/あなた/g, playerName ? `${playerName}さんと` : 'あなた') : '';
+
     const currentGirl = inEnding && selectedEnding
         ? selectedEnding
         : stage?.girl;
+
+    // Track if ranking has been submitted for this ending
+    const [hasSubmittedRanking, setHasSubmittedRanking] = useState(false);
+
+    // Auto-submit ranking when ending screen is shown
+    useEffect(() => {
+        const submitRanking = async () => {
+            if (currentDialogue?.speaker === 'ending' && playerName && !hasSubmittedRanking) {
+                try {
+                    const totalScore = affection.girl1 + affection.girl2 + affection.girl3;
+                    await addDoc(collection(db, 'rankings'), {
+                        name: playerName,
+                        score: totalScore,
+                        girl1: affection.girl1,
+                        girl2: affection.girl2,
+                        girl3: affection.girl3,
+                        selectedEnding: selectedEnding,
+                        isSadEnding: isSadEnding,
+                        timestamp: serverTimestamp()
+                    });
+                    setHasSubmittedRanking(true);
+                    console.log('Ranking submitted successfully!');
+                } catch (error) {
+                    console.error('Error submitting ranking:', error);
+                }
+            }
+        };
+        submitRanking();
+    }, [currentDialogue, playerName, hasSubmittedRanking, affection, selectedEnding, isSadEnding]);
 
     useEffect(() => {
         setTextRevealed(false);
@@ -2348,9 +2620,12 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
     const handleFinalChoice = (index) => {
         const choices = ['girl1', 'girl2', 'girl3'];
         const chosenGirl = choices[index];
-        const girlAffection = affection[chosenGirl] || 0;
 
-        // Option 3: Affection-based ending determination
+        // If player already completed an ending, force that ending
+        const finalGirl = completedEnding || chosenGirl;
+        const girlAffection = affection[finalGirl] || 0;
+
+        // Affection-based ending determination
         // 80%+ = guaranteed happy ending
         // Below 30% = guaranteed sad ending
         // 30-80% = probability based on affection
@@ -2362,15 +2637,19 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
             isHappyEnding = false;
         } else {
             // 30-80%: Calculate probability
-            // affection 30 = 0% chance, affection 80 = 100% chance
-            const probability = (girlAffection - 30) / 50; // 0.0 to 1.0
+            const probability = (girlAffection - 30) / 50;
             isHappyEnding = Math.random() < probability;
         }
 
-        setSelectedEnding(chosenGirl);
+        setSelectedEnding(finalGirl);
         setIsSadEnding(!isHappyEnding);
         setInEnding(true);
         setDialogueIndex(0);
+
+        // Mark this ending as completed (locks future choices)
+        if (!completedEnding) {
+            setCompletedEnding(finalGirl);
+        }
     };
 
     if (!currentDialogue) {
@@ -2637,6 +2916,27 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
                                             </button>
                                         </div>
                                     )}
+
+                                    {/* AI Voice Recognition Button */}
+                                    {!quizAnswer && (
+                                        <div className="mt-6 flex justify-center">
+                                            <button
+                                                onClick={() => setShowPremium(true)}
+                                                className="group relative flex items-center gap-3 px-6 py-3 bg-slate-900/60 backdrop-blur-xl rounded-full border border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:shadow-[0_0_25px_rgba(6,182,212,0.5)] transition-all hover:scale-105 overflow-hidden"
+                                            >
+                                                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-purple-500/10 animate-pulse" />
+                                                <div className="relative z-10 flex items-center gap-2">
+                                                    <div className="relative">
+                                                        <Mic className="w-5 h-5 text-cyan-400 animate-pulse" />
+                                                        <div className="absolute inset-0 bg-cyan-400 blur-sm opacity-50 animate-ping" />
+                                                    </div>
+                                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400 font-bold text-sm tracking-wide">
+                                                        AI 음성 인식
+                                                    </span>
+                                                </div>
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             )}
 
@@ -2664,23 +2964,40 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
                                     <div className="text-center mb-4">
                                         <Users className="w-10 h-10 text-pink-400 mx-auto mb-2" />
                                         <div className="text-white text-base">{currentDialogue.question}</div>
+                                        {completedEnding && (
+                                            <div className="text-xs text-pink-400 mt-2">
+                                                💝 이미 {characters[completedEnding].name} 엔딩을 완료했습니다
+                                            </div>
+                                        )}
                                     </div>
                                     <div className="grid grid-cols-3 gap-2">
                                         {currentDialogue.options.map((option, idx) => {
                                             const girlKey = ['girl1', 'girl2', 'girl3'][idx];
+                                            const isLocked = completedEnding && completedEnding !== girlKey;
                                             const bgColors = ['bg-pink-500/30 hover:bg-pink-500/50 border-pink-400/50 text-pink-300', 'bg-purple-500/30 hover:bg-purple-500/50 border-purple-400/50 text-purple-300', 'bg-amber-500/30 hover:bg-amber-500/50 border-amber-400/50 text-amber-300'];
+                                            const lockedStyle = 'bg-gray-700/50 border-gray-600/50 text-gray-500 cursor-not-allowed opacity-50';
+
                                             return (
                                                 <button
                                                     key={idx}
-                                                    onClick={() => handleFinalChoice(idx)}
-                                                    className={`p-2 rounded-lg text-xs font-bold transition-all text-center border-2 ${bgColors[idx]}`}
+                                                    onClick={() => !isLocked && handleFinalChoice(idx)}
+                                                    disabled={isLocked}
+                                                    className={`p-2 rounded-lg text-xs font-bold transition-all text-center border-2 ${isLocked ? lockedStyle : bgColors[idx]}`}
                                                 >
-                                                    <img
-                                                        src={characters[girlKey].image}
-                                                        alt={option}
-                                                        className="w-16 h-20 object-cover rounded-lg mx-auto mb-1 border border-white/20"
-                                                    />
+                                                    <div className="relative">
+                                                        <img
+                                                            src={characters[girlKey].image}
+                                                            alt={option}
+                                                            className={`w-16 h-20 object-cover rounded-lg mx-auto mb-1 border border-white/20 ${isLocked ? 'grayscale' : ''}`}
+                                                        />
+                                                        {isLocked && (
+                                                            <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-lg">
+                                                                <span className="text-2xl">🔒</span>
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                     {option}
+                                                    {isLocked && <div className="text-[10px] mt-1">잠금됨</div>}
                                                 </button>
                                             );
                                         })}
@@ -2692,11 +3009,11 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
                             {currentDialogue.speaker !== 'quiz' && currentDialogue.speaker !== 'choice' && currentDialogue.speaker !== 'finalChoice' && (
                                 <div onClick={handleNext} className="cursor-pointer">
                                     <p className={`text-white text-sm leading-relaxed mb-2 transition-opacity ${textRevealed ? 'opacity-100' : 'opacity-0'}`}>
-                                        {currentDialogue.text}
+                                        {processedText}
                                     </p>
                                     {currentDialogue.textJp && (
                                         <p className={`text-pink-300/70 text-xs transition-opacity ${textRevealed ? 'opacity-100' : 'opacity-0'}`}>
-                                            {currentDialogue.textJp}
+                                            {processedTextJp}
                                         </p>
                                     )}
                                     <div className="absolute bottom-3 right-4 flex items-center gap-0.5 text-pink-300/60 animate-pulse">
@@ -2715,6 +3032,103 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
     );
 }
 
+function PremiumPopup({ onClose }) {
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fadeIn">
+            <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm" onClick={onClose} />
+
+            <div className="relative w-full max-w-sm bg-slate-800/90 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl overflow-hidden animate-[scaleIn_0.3s_ease-out]">
+                {/* Close Button */}
+                <button
+                    onClick={onClose}
+                    className="absolute top-3 right-3 p-2 text-gray-400 hover:text-white transition-colors z-50 bg-slate-700/50 rounded-full hover:bg-slate-600/50"
+                >
+                    <X className="w-5 h-5" />
+                </button>
+
+                {/* Sparkling Background Effect */}
+                <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                    <div className="absolute top-[-20%] left-[-20%] w-[140%] h-[140%] bg-gradient-to-br from-pink-500/20 via-transparent to-purple-500/20 animate-spin-slow" />
+                    <Sparkles className="absolute top-10 left-10 w-4 h-4 text-yellow-300 opacity-50 animate-pulse" />
+                    <Sparkles className="absolute top-20 right-10 w-6 h-6 text-purple-300 opacity-60 animate-pulse delay-75" />
+                    <Sparkles className="absolute bottom-10 left-20 w-3 h-3 text-cyan-300 opacity-70 animate-pulse delay-150" />
+                </div>
+
+                <div className="relative z-10 flex flex-col items-center p-8 text-center">
+                    {/* Header Icon */}
+                    <div className="mb-6 relative">
+                        <div className="absolute inset-0 bg-gradient-to-r from-pink-500 to-purple-500 blur-xl opacity-30" />
+                        <div className="relative flex items-center justify-center w-20 h-20 bg-gradient-to-br from-pink-500/20 to-purple-500/20 rounded-full border border-white/20 backdrop-blur-md">
+                            <Heart className="w-10 h-10 text-pink-400 fill-pink-400/20 absolute" />
+                            <Mic className="w-8 h-8 text-white absolute transform translate-x-2 translate-y-2 drop-shadow-lg" />
+                            <Gem className="w-6 h-6 text-cyan-400 absolute top-0 right-0 transform -translate-x-1 translate-y-1 animate-bounce" />
+                        </div>
+                    </div>
+
+                    {/* Title */}
+                    <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-300 to-purple-300 mb-2">
+                        AI 음성 튜터 &<br />프리미엄 패스 잠금 해제
+                    </h2>
+                    <p className="text-gray-400 text-sm mb-8">
+                        코이벤의 모든 기능을 경험해보세요!
+                    </p>
+
+                    {/* Benefits List */}
+                    <div className="w-full space-y-4 mb-8 text-left">
+                        {[
+                            { icon: Mic, text: "AI 실시간 발음 피드백", color: "cyan" },
+                            { icon: Heart, text: "음성 대화 시 호감도 보너스", color: "pink" },
+                            { icon: Zap, text: "광고 없는 쾌적한 플레이", color: "yellow" },
+                            { icon: Shirt, text: "계절 한정 특별 코스튬", color: "purple" }
+                        ].map((item, idx) => (
+                            <div key={idx} className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+                                <div className={`p-2 rounded-full bg-${item.color}-500/20 text-${item.color}-400`}>
+                                    <item.icon className="w-4 h-4" />
+                                </div>
+                                <span className="text-sm font-medium text-gray-200">{item.text}</span>
+                                <Check className="w-4 h-4 text-green-400 ml-auto" />
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Subscription Button */}
+                    <button className="group w-full relative py-4 rounded-xl overflow-hidden transition-transform hover:scale-105 shadow-lg shadow-purple-500/30">
+                        <div className="absolute inset-0 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 animate-gradient-x" />
+                        <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                        <div className="relative flex flex-col items-center justify-center text-white">
+                            <span className="text-lg font-bold">지금 구독하기</span>
+                            <span className="text-xs opacity-90">월 9,900원</span>
+                        </div>
+                    </button>
+
+                    <button onClick={onClose} className="mt-4 text-xs text-gray-500 hover:text-gray-300 transition-colors">
+                        구매 복원
+                    </button>
+                </div>
+            </div>
+
+            <style>{`
+                @keyframes scaleIn {
+                    from { opacity: 0; transform: scale(0.9); }
+                    to { opacity: 1; transform: scale(1); }
+                }
+                @keyframes spin-slow {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
+                }
+                @keyframes gradient-x {
+                    0%, 100% { background-position: 0% 50%; }
+                    50% { background-position: 100% 50%; }
+                }
+                .animate-gradient-x {
+                    background-size: 200% 200%;
+                    animation: gradient-x 3s ease infinite;
+                }
+            `}</style>
+        </div>
+    );
+}
+
 function MenuBarButton({ icon: Icon, label, active, onClick }) {
     return (
         <button
@@ -2729,7 +3143,7 @@ function MenuBarButton({ icon: Icon, label, active, onClick }) {
 }
 
 // Training Mode  
-function TrainingMode({ learnedWords, setLearnedWords, wrongWords, setWrongWords, energy, setEnergy, onBack }) {
+function TrainingMode({ learnedWords, setLearnedWords, wrongWords, setWrongWords, energy, setEnergy, onBack, setShowPremium }) {
     const [tab, setTab] = useState('select'); // select, hiragana-chart, katakana-chart, quiz
     const [quizType, setQuizType] = useState(null); // hiragana, katakana, vocab-1, vocab-2, vocab-3
     const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -2757,12 +3171,25 @@ function TrainingMode({ learnedWords, setLearnedWords, wrongWords, setWrongWords
             const stageNum = parseInt(type.split('-')[1]);
             const stageVocab = vocabularyData.filter(v => v.stage === stageNum);
             const shuffled = [...stageVocab].sort(() => Math.random() - 0.5);
-            return shuffled.map(item => ({
-                question: item.meaning,
-                correct: item.japanese,
-                options: [item.japanese, ...stageVocab.filter(v => v.japanese !== item.japanese).sort(() => Math.random() - 0.5).slice(0, 3).map(v => v.japanese)].sort(() => Math.random() - 0.5),
-                vocabData: item
-            }));
+            return shuffled.map(item => {
+                // Generate shuffled options first
+                const distractors = stageVocab.filter(v => v.japanese !== item.japanese).sort(() => Math.random() - 0.5).slice(0, 3);
+                const options = [item.japanese, ...distractors.map(v => v.japanese)].sort(() => Math.random() - 0.5);
+
+                // Map options to their meanings for display
+                const meanings = options.map(opt => {
+                    const vocab = stageVocab.find(v => v.japanese === opt);
+                    return vocab ? vocab.meaning : '';
+                });
+
+                return {
+                    question: item.meaning,
+                    correct: item.japanese,
+                    options: options,
+                    meanings: meanings,
+                    vocabData: item
+                };
+            });
         }
     };
 
@@ -2975,15 +3402,44 @@ function TrainingMode({ learnedWords, setLearnedWords, wrongWords, setWrongWords
                                         key={idx}
                                         onClick={() => handleAnswer(option)}
                                         disabled={selectedAnswer !== null}
-                                        className={`p-3 rounded-xl text-base font-bold transition-all transform hover:scale-105 ${buttonClass}`}
+                                        className={`p-3 rounded-xl text-base font-bold transition-all transform hover:scale-105 ${buttonClass} relative overflow-hidden group`}
                                     >
-                                        {showResult && isCorrect && <span className="mr-1">✓</span>}
-                                        {showResult && isSelected && !isCorrect && <span className="mr-1">✗</span>}
-                                        {option}
+                                        <div className="relative z-10">
+                                            {showResult && isCorrect && <span className="mr-1">✓</span>}
+                                            {showResult && isSelected && !isCorrect && <span className="mr-1">✗</span>}
+                                            {option}
+                                            {/* Show meaning if answered and meaning exists */}
+                                            {showResult && currentQ.meanings && currentQ.meanings[idx] && (
+                                                <div className="text-xs font-normal opacity-80 mt-1 pb-1 pt-1 border-t border-white/20">
+                                                    {currentQ.meanings[idx]}
+                                                </div>
+                                            )}
+                                        </div>
                                     </button>
                                 );
                             })}
                         </div>
+
+                        {/* AI Voice Recognition Button */}
+                        {!selectedAnswer && (
+                            <div className="mt-6 flex justify-center w-full">
+                                <button
+                                    onClick={() => setShowPremium(true)}
+                                    className="group relative flex items-center gap-3 px-6 py-3 bg-slate-900/60 backdrop-blur-xl rounded-full border border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:shadow-[0_0_25px_rgba(6,182,212,0.5)] transition-all hover:scale-105 overflow-hidden"
+                                >
+                                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-purple-500/10 animate-pulse" />
+                                    <div className="relative z-10 flex items-center gap-2">
+                                        <div className="relative">
+                                            <Mic className="w-5 h-5 text-cyan-400 animate-pulse" />
+                                            <div className="absolute inset-0 bg-cyan-400 blur-sm opacity-50 animate-ping" />
+                                        </div>
+                                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400 font-bold text-sm tracking-wide">
+                                            AI 음성 인식
+                                        </span>
+                                    </div>
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -3395,6 +3851,188 @@ function Dictionary({ learnedWords, wrongWords, setWrongWords, onBack }) {
     );
 }
 
+// Ranking Dashboard
+function Ranking({ playerName, affection, onBack }) {
+    const [rankings, setRankings] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [myRank, setMyRank] = useState(null);
+
+    const totalScore = affection.girl1 + affection.girl2 + affection.girl3;
+
+    // Fetch rankings from Firebase
+    useEffect(() => {
+        const fetchRankings = async () => {
+            try {
+                const rankingsRef = collection(db, 'rankings');
+                const q = query(rankingsRef, orderBy('score', 'desc'), limit(100));
+                const querySnapshot = await getDocs(q);
+
+                const rankingData = [];
+                querySnapshot.forEach((doc) => {
+                    rankingData.push({ id: doc.id, ...doc.data() });
+                });
+
+                setRankings(rankingData);
+
+                // Find my rank
+                const myIndex = rankingData.findIndex(r => r.name === playerName && r.score === totalScore);
+                if (myIndex !== -1) {
+                    setMyRank(myIndex + 1);
+                }
+            } catch (error) {
+                console.error('Error fetching rankings:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchRankings();
+    }, [playerName, totalScore]);
+
+    const getRankColor = (rank) => {
+        if (rank === 1) return 'from-yellow-400 to-amber-500';
+        if (rank === 2) return 'from-gray-300 to-gray-400';
+        if (rank === 3) return 'from-amber-600 to-amber-700';
+        return 'from-slate-600 to-slate-700';
+    };
+
+    const getRankIcon = (rank) => {
+        if (rank === 1) return '🥇';
+        if (rank === 2) return '🥈';
+        if (rank === 3) return '🥉';
+        return rank;
+    };
+
+    return (
+        <div className="h-screen relative overflow-hidden">
+            {/* Background */}
+            <div
+                className="absolute inset-0 bg-cover bg-center"
+                style={{ backgroundImage: `url(${bgTraining})` }}
+            >
+                <div className="absolute inset-0 bg-slate-900/85 backdrop-blur-sm" />
+            </div>
+
+            <div className="relative z-10 h-full flex flex-col p-4">
+                {/* Header */}
+                <div className="flex items-center justify-between mb-4">
+                    <button onClick={onBack} className="flex items-center gap-1 text-gray-400 hover:text-white text-sm">
+                        <ArrowLeft className="w-4 h-4" /> 돌아가기
+                    </button>
+                    <div className="flex items-center gap-2">
+                        <Trophy className="w-5 h-5 text-yellow-400" />
+                        <span className="text-white font-bold">랭킹</span>
+                    </div>
+                    <div className="w-20" /> {/* Spacer */}
+                </div>
+
+                {/* My Score Card */}
+                <div className="bg-gradient-to-r from-pink-500/20 to-purple-500/20 backdrop-blur-xl rounded-2xl p-4 border border-pink-500/30 mb-4">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <div className="text-gray-400 text-xs mb-1">내 점수</div>
+                            <div className="text-white font-bold text-lg">{playerName || '이름 없음'}</div>
+                        </div>
+                        <div className="text-right">
+                            <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">
+                                {totalScore}
+                            </div>
+                            <div className="text-xs text-gray-400">총 호감도</div>
+                        </div>
+                    </div>
+
+                    {/* Individual scores */}
+                    <div className="flex gap-2 mt-3">
+                        <div className="flex-1 bg-pink-500/20 rounded-lg p-2 text-center">
+                            <div className="text-pink-400 text-xs">하나</div>
+                            <div className="text-white font-bold">{affection.girl1}%</div>
+                        </div>
+                        <div className="flex-1 bg-purple-500/20 rounded-lg p-2 text-center">
+                            <div className="text-purple-400 text-xs">미사키</div>
+                            <div className="text-white font-bold">{affection.girl2}%</div>
+                        </div>
+                        <div className="flex-1 bg-amber-500/20 rounded-lg p-2 text-center">
+                            <div className="text-amber-400 text-xs">히나타</div>
+                            <div className="text-white font-bold">{affection.girl3}%</div>
+                        </div>
+                    </div>
+
+                    {/* Show my rank if found */}
+                    {myRank && (
+                        <div className="mt-4 text-center p-3 bg-gradient-to-r from-pink-500/20 to-purple-500/20 rounded-xl border border-pink-500/30">
+                            <span className="text-pink-400 text-sm">현재 순위: </span>
+                            <span className="text-white font-bold text-lg">{myRank}위</span>
+                        </div>
+                    )}
+                </div>
+
+                {/* Rankings List */}
+                <div className="flex-1 overflow-y-auto">
+                    <div className="text-gray-400 text-xs mb-2 flex items-center gap-1">
+                        <Users className="w-3 h-3" />
+                        전체 랭킹 TOP 100
+                    </div>
+
+                    {loading ? (
+                        <div className="flex items-center justify-center h-40">
+                            <RefreshCw className="w-8 h-8 text-pink-400 animate-spin" />
+                        </div>
+                    ) : rankings.length === 0 ? (
+                        <div className="text-center py-10">
+                            <Trophy className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                            <p className="text-gray-500">아직 등록된 랭킹이 없습니다</p>
+                            <p className="text-gray-600 text-sm mt-1">첫 번째 랭커가 되어보세요!</p>
+                        </div>
+                    ) : (
+                        <div className="space-y-2 pb-4">
+                            {rankings.map((player, index) => {
+                                const rank = index + 1;
+                                const isMe = player.name === playerName && player.score === totalScore;
+
+                                return (
+                                    <div
+                                        key={player.id}
+                                        className={`flex items-center gap-3 p-3 rounded-xl backdrop-blur transition-all ${isMe
+                                            ? 'bg-pink-500/20 border border-pink-500/50 ring-2 ring-pink-500/30'
+                                            : 'bg-slate-800/50 border border-slate-700/50 hover:bg-slate-700/50'
+                                            }`}
+                                    >
+                                        {/* Rank */}
+                                        <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${getRankColor(rank)} flex items-center justify-center font-bold text-white shadow-lg ${rank <= 3 ? 'text-lg' : 'text-sm'}`}>
+                                            {getRankIcon(rank)}
+                                        </div>
+
+                                        {/* Player Info */}
+                                        <div className="flex-1">
+                                            <div className={`font-bold ${isMe ? 'text-pink-300' : 'text-white'}`}>
+                                                {player.name}
+                                                {isMe && <span className="ml-2 text-xs text-pink-400">(나)</span>}
+                                            </div>
+                                            <div className="flex gap-2 text-xs">
+                                                <span className="text-pink-400/70">♥{player.girl1 || 0}</span>
+                                                <span className="text-purple-400/70">♥{player.girl2 || 0}</span>
+                                                <span className="text-amber-400/70">♥{player.girl3 || 0}</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Score */}
+                                        <div className="text-right">
+                                            <div className={`text-xl font-bold ${rank === 1 ? 'text-yellow-400' : rank === 2 ? 'text-gray-300' : rank === 3 ? 'text-amber-500' : 'text-white'}`}>
+                                                {player.score}
+                                            </div>
+                                            <div className="text-xs text-gray-500">점</div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+}
+
 function Store({ onBack }) {
     const [activeTab, setActiveTab] = useState('currency');
 
@@ -3466,14 +4104,14 @@ function Store({ onBack }) {
                                     <Crown className="w-8 h-8 text-yellow-400" />
                                 </div>
                                 <ul className="space-y-2 mb-6 text-sm text-gray-300">
-                                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-green-400" />모든 광고 제거</li>
-                                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-green-400" />무제한 에너지</li>
-                                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-green-400" />AI 정밀 리프트 해제</li>
-                                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-green-400" />매일 루비 20개 지급</li>
+                                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-green-400" />AI 실시간 발음 피드백</li>
+                                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-green-400" />음성 대화 시 호감도 보너스</li>
+                                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-green-400" />광고 없는 쾌적한 플레이</li>
+                                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-green-400" />계절 한정 특별 코스튬</li>
                                 </ul>
                                 <div className="flex gap-3">
-                                    <button className="flex-1 bg-slate-700 py-3 rounded-xl text-gray-300 text-sm font-bold border border-slate-600">월 4,900원</button>
-                                    <button className="flex-1 bg-gradient-to-r from-purple-500 to-indigo-500 py-3 rounded-xl text-white text-sm font-bold shadow-lg shadow-purple-500/20">연 49,000원</button>
+                                    <button className="flex-1 bg-slate-700 py-3 rounded-xl text-gray-300 text-sm font-bold border border-slate-600">월 9,900원</button>
+                                    <button className="flex-1 bg-gradient-to-r from-purple-500 to-indigo-500 py-3 rounded-xl text-white text-sm font-bold shadow-lg shadow-purple-500/20">연 59,000원</button>
                                 </div>
                             </div>
                         </div>
