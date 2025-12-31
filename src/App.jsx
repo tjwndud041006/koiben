@@ -1,5 +1,5 @@
 //수정
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { db } from './firebase';
 import { collection, addDoc, query, orderBy, limit, getDocs, serverTimestamp, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import {
@@ -28,6 +28,7 @@ import {
     Trophy,
     Mic,
     Volume2,
+    VolumeX,
     ShoppingBag,
     Gem,
     Clock,
@@ -2053,6 +2054,59 @@ export default function KoibenApp() {
     const [showPremium, setShowPremium] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
+    // BGM States
+    const [isMuted, setIsMuted] = useState(false);
+    const [audioStarted, setAudioStarted] = useState(false);
+    const audioRef = useRef(null);
+
+    // Initialize BGM
+    useEffect(() => {
+        // Simple royalty-free BGM placeholder (Happy/Upbeat)
+        audioRef.current = new Audio('Itomori high school.mp3');
+        audioRef.current.loop = true;
+        audioRef.current.volume = 0.3;
+
+        return () => {
+            if (audioRef.current) {
+                audioRef.current.pause();
+                audioRef.current = null;
+            }
+        };
+    }, []);
+
+    // Handle Mute
+    useEffect(() => {
+        if (audioRef.current) {
+            audioRef.current.muted = isMuted;
+        }
+    }, [isMuted]);
+
+    // Handle initial interaction to play audio (Chrome policy)
+    const startAudio = () => {
+        if (!audioStarted && audioRef.current) {
+            audioRef.current.play().catch(e => console.log("Audio play blocked:", e));
+            setAudioStarted(true);
+        }
+    };
+
+    // Global interaction listener for audio
+    useEffect(() => {
+        const handleInteraction = () => {
+            if (!audioStarted) startAudio();
+        };
+        window.addEventListener('click', handleInteraction);
+        window.addEventListener('touchstart', handleInteraction);
+        return () => {
+            window.removeEventListener('click', handleInteraction);
+            window.removeEventListener('touchstart', handleInteraction);
+        };
+    }, [audioStarted]);
+
+    const toggleMute = (e) => {
+        e.stopPropagation();
+        setIsMuted(!isMuted);
+    };
+
     const handleStart = () => {
         if (!playerName) {
             setCurrentScreen('nameInput');
@@ -2139,7 +2193,16 @@ export default function KoibenApp() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-900 overflow-hidden font-sans">
+        <div className="min-h-screen bg-slate-900 overflow-hidden font-sans relative">
+            {/* BGM Toggle Button (Floating) */}
+            <button
+                onClick={toggleMute}
+                className="fixed top-16 left-4 z-[100] w-10 h-10 flex items-center justify-center rounded-full bg-slate-900/60 backdrop-blur-md border border-white/20 text-white shadow-lg transition-all hover:scale-110 active:scale-95"
+                title={isMuted ? "음악 켜기" : "음악 끄기"}
+            >
+                {isMuted ? <VolumeX className="w-5 h-5 text-gray-400" /> : <Volume2 className="w-5 h-5 text-pink-400 animate-pulse" />}
+            </button>
+
             {currentScreen === 'title' && (
                 <TitleScreen onStart={handleStart} />
             )}
@@ -2408,7 +2471,7 @@ function TitleScreen({ onStart }) {
                         <Heart className="w-6 h-6 text-purple-400 fill-purple-400" />
                     </div>
                     <h2 className="text-xl text-pink-300/80 tracking-widest mb-2">KOIBEN</h2>
-                    <p className="text-gray-400 text-sm">~ 사랑하며 배우는 일본어 ~</p>
+                    <p className="text-gray-400 text-sm">~ 일본어 학습 연애 시뮬레이션 게임 ~</p>
                 </div>
 
                 {/* Start Button */}
@@ -2575,6 +2638,7 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
     const [isSadEnding, setIsSadEnding] = useState(false);
     const [autoPlay, setAutoPlay] = useState(false);
     const [stageAffection, setStageAffection] = useState({ girl1: 0, girl2: 0, girl3: 0 });
+    const [isVoiceEnabled, setIsVoiceEnabled] = useState(true); // TTS Toggle State
 
     const stageKey = `stage${currentStage}`;
     const stage = storyData[stageKey];
@@ -2597,24 +2661,130 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
     // Track if ranking has been submitted for this ending
     const [hasSubmittedRanking, setHasSubmittedRanking] = useState(false);
 
+    // Pre-recorded Voice Playback System
+    const [currentAudio, setCurrentAudio] = useState(null);
+
+    useEffect(() => {
+        if (!isVoiceEnabled || !currentDialogue) return;
+
+        // Stop any currently playing audio
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+        }
+        window.speechSynthesis.cancel();
+
+        // Only speak if speaker is a girl
+        if (['girl1', 'girl2', 'girl3'].includes(currentDialogue.speaker)) {
+            // Count girl1 dialogues up to current index to get voice file number
+            let girl1Counter = 0;
+            for (let i = 0; i < dialogueIndex; i++) {
+                if (currentDialogues[i]?.speaker === 'girl1') {
+                    girl1Counter++;
+                }
+            }
+
+            // Current dialogue is also girl1, so increment
+            if (currentDialogue.speaker === 'girl1') {
+                girl1Counter++;
+            }
+
+            // Try to play pre-recorded voice file
+            const voiceFilePath = `/voices/hana/hana_stage1_${String(girl1Counter).padStart(3, '0')}.wav`;
+
+            const audio = new Audio(voiceFilePath);
+
+            audio.play()
+                .then(() => {
+                    console.log('✅ Playing voice file:', voiceFilePath);
+                    setCurrentAudio(audio);
+                })
+                .catch((error) => {
+                    console.warn(`⚠️ Voice file not found (${voiceFilePath}), using browser TTS fallback`);
+
+                    // Fallback to browser TTS
+                    const utterance = new SpeechSynthesisUtterance(currentDialogue.textJp);
+                    utterance.lang = 'ja-JP';
+
+                    switch (currentDialogue.speaker) {
+                        case 'girl1':
+                            utterance.pitch = 1.3;
+                            utterance.rate = 1.0;
+                            break;
+                        case 'girl2':
+                            utterance.pitch = 0.85;
+                            utterance.rate = 0.95;
+                            break;
+                        case 'girl3':
+                            utterance.pitch = 1.15;
+                            utterance.rate = 1.15;
+                            break;
+                        default:
+                            utterance.pitch = 1.0;
+                            utterance.rate = 1.0;
+                    }
+
+                    window.speechSynthesis.speak(utterance);
+                });
+        }
+
+        return () => {
+            if (currentAudio) {
+                currentAudio.pause();
+            }
+            window.speechSynthesis.cancel();
+        };
+    }, [dialogueIndex, isVoiceEnabled, currentDialogue?.speaker]);
+
     // Auto-submit ranking when ending screen is shown
     useEffect(() => {
         const submitRanking = async () => {
             if (currentDialogue?.speaker === 'ending' && playerName && !hasSubmittedRanking) {
                 try {
                     const totalScore = affection.girl1 + affection.girl2 + affection.girl3;
-                    await addDoc(collection(db, 'rankings'), {
-                        name: playerName,
-                        score: totalScore,
-                        girl1: affection.girl1,
-                        girl2: affection.girl2,
-                        girl3: affection.girl3,
-                        selectedEnding: selectedEnding,
-                        isSadEnding: isSadEnding,
-                        timestamp: serverTimestamp()
+
+                    // Check if player already has a ranking
+                    const rankingsRef = collection(db, 'rankings');
+                    const q = query(rankingsRef, orderBy('name'));
+                    const querySnapshot = await getDocs(q);
+
+                    let existingDocId = null;
+                    let existingScore = 0;
+
+                    querySnapshot.forEach((doc) => {
+                        if (doc.data().name === playerName) {
+                            existingDocId = doc.id;
+                            existingScore = doc.data().score || 0;
+                        }
                     });
+
+                    // Only update if new score is higher or if no existing record
+                    if (!existingDocId || totalScore > existingScore) {
+                        const rankingData = {
+                            name: playerName,
+                            score: totalScore,
+                            girl1: affection.girl1,
+                            girl2: affection.girl2,
+                            girl3: affection.girl3,
+                            selectedEnding: selectedEnding,
+                            isSadEnding: isSadEnding,
+                            timestamp: serverTimestamp()
+                        };
+
+                        if (existingDocId) {
+                            // Update existing record
+                            await updateDoc(doc(db, 'rankings', existingDocId), rankingData);
+                            console.log('Ranking updated with higher score!');
+                        } else {
+                            // Create new record
+                            await addDoc(rankingsRef, rankingData);
+                            console.log('New ranking submitted!');
+                        }
+                    } else {
+                        console.log('Score not higher than existing record, skipping update.');
+                    }
+
                     setHasSubmittedRanking(true);
-                    console.log('Ranking submitted successfully!');
                 } catch (error) {
                     console.error('Error submitting ranking:', error);
                 }
@@ -2874,6 +3044,30 @@ function StoryMode({ currentStage, affection, setAffection, onStageComplete, set
                     <ArrowLeft className="w-3 h-3" /> 돌아가기
                 </button>
             </div>
+            {/* Center Header Controls (Voice & Auto) */}
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 flex gap-2">
+                <button
+                    onClick={() => setIsVoiceEnabled(!isVoiceEnabled)}
+                    className={`p-1.5 rounded-full border backdrop-blur-sm transition-all ${isVoiceEnabled
+                        ? 'bg-pink-500/80 border-pink-400 text-white shadow-lg shadow-pink-500/20'
+                        : 'bg-slate-800/70 border-slate-600/50 text-gray-400'
+                        }`}
+                    title={isVoiceEnabled ? "음성 끄기" : "음성 켜기"}
+                >
+                    {isVoiceEnabled ? <Mic className="w-4 h-4" /> : <Mic className="w-4 h-4 relative"><div className="absolute inset-0 flex items-center justify-center transform rotate-45 w-full h-0.5 bg-current top-1/2 -translate-y-1/2" /></Mic>}
+                </button>
+                <button
+                    onClick={() => setAutoPlay(!autoPlay)}
+                    className={`p-1.5 rounded-full border backdrop-blur-sm transition-all ${autoPlay
+                        ? 'bg-purple-500/80 border-purple-400 text-white shadow-lg shadow-purple-500/20'
+                        : 'bg-slate-800/70 border-slate-600/50 text-gray-400'
+                        }`}
+                    title={autoPlay ? "자동 진행 끄기" : "자동 진행 켜기"}
+                >
+                    {autoPlay ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+                </button>
+
+            </div>
             <div className="absolute top-4 right-4 z-30 flex items-center gap-2">
                 {currentGirl && (
                     <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/70 backdrop-blur border ${currentGirl === 'girl1' ? 'border-pink-400/50' : currentGirl === 'girl2' ? 'border-purple-400/50' : 'border-amber-400/50'
@@ -3131,7 +3325,10 @@ function PremiumPopup({ onClose }) {
                     </div>
 
                     {/* Subscription Button */}
-                    <button className="group w-full relative py-4 rounded-xl overflow-hidden transition-transform hover:scale-105 shadow-lg shadow-purple-500/30">
+                    <button
+                        onClick={() => alert("너 돈 없잖아 ㅋㅋ")}
+                        className="group w-full relative py-4 rounded-xl overflow-hidden transition-transform hover:scale-105 shadow-lg shadow-purple-500/30"
+                    >
                         <div className="absolute inset-0 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 animate-gradient-x" />
                         <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                         <div className="relative flex flex-col items-center justify-center text-white">
@@ -3784,7 +3981,7 @@ function TrainingMode({ learnedWords, setLearnedWords, wrongWords, setWrongWords
                     <div className="mb-4">
                         <h2 className="text-sm font-bold text-white mb-2 flex items-center gap-1"><Mic className="w-4 h-4 text-emerald-400" /> AI 발음 연습</h2>
                         <button
-                            onClick={() => setTab('pronunciation')}
+                            onClick={() => setShowPremium(true)}
                             className="w-full p-3 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 rounded-lg border border-emerald-400/30 hover:border-emerald-400 transition-all text-left"
                         >
                             <div className="flex items-center gap-2">
@@ -3911,10 +4108,24 @@ function Ranking({ playerName, affection, onBack }) {
                     rankingData.push({ id: doc.id, ...doc.data() });
                 });
 
-                setRankings(rankingData);
+                // Remove duplicates: keep only highest score per player name
+                const nameToHighestScore = new Map();
+
+                rankingData.forEach((ranking) => {
+                    const existingRanking = nameToHighestScore.get(ranking.name);
+                    if (!existingRanking || ranking.score > existingRanking.score) {
+                        nameToHighestScore.set(ranking.name, ranking);
+                    }
+                });
+
+                // Convert Map back to array and sort by score
+                const uniqueRankings = Array.from(nameToHighestScore.values())
+                    .sort((a, b) => b.score - a.score);
+
+                setRankings(uniqueRankings);
 
                 // Find my rank
-                const myIndex = rankingData.findIndex(r => r.name === playerName && r.score === totalScore);
+                const myIndex = uniqueRankings.findIndex(r => r.name === playerName);
                 if (myIndex !== -1) {
                     setMyRank(myIndex + 1);
                 }
@@ -3964,6 +4175,7 @@ function Ranking({ playerName, affection, onBack }) {
                     </div>
                     <div className="w-20" /> {/* Spacer */}
                 </div>
+
 
                 {/* My Score Card */}
                 <div className="bg-gradient-to-r from-pink-500/20 to-purple-500/20 backdrop-blur-xl rounded-2xl p-4 border border-pink-500/30 mb-4">
@@ -4074,12 +4286,17 @@ function Ranking({ playerName, affection, onBack }) {
                     )}
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
 
 function Store({ onBack }) {
     const [activeTab, setActiveTab] = useState('currency');
+
+    // Purchase feedback handler
+    const handlePurchase = () => {
+        alert("너 돈 없잖아 ㅋㅋ");
+    };
 
     const tabs = [
         { id: 'currency', label: '재화', icon: Gem },
@@ -4123,7 +4340,10 @@ function Store({ onBack }) {
                                     )}
                                     <Gem className="w-8 h-8 text-pink-400 mb-2 group-hover:scale-110 transition-transform" />
                                     <div className="text-white font-bold text-lg">{item.amount} <span className="text-xs text-pink-400">+{item.bonus}</span></div>
-                                    <button className="mt-3 w-full bg-slate-700 hover:bg-pink-500 hover:text-white transition-colors py-2 rounded-lg text-sm text-gray-300 font-medium">
+                                    <button
+                                        onClick={handlePurchase}
+                                        className="mt-3 w-full bg-slate-700 hover:bg-pink-500 hover:text-white transition-colors py-2 rounded-lg text-sm text-gray-300 font-medium"
+                                    >
                                         {item.price}
                                     </button>
                                 </div>
@@ -4155,8 +4375,8 @@ function Store({ onBack }) {
                                     <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-green-400" />계절 한정 특별 코스튬</li>
                                 </ul>
                                 <div className="flex gap-3">
-                                    <button className="flex-1 bg-slate-700 py-3 rounded-xl text-gray-300 text-sm font-bold border border-slate-600">월 9,900원</button>
-                                    <button className="flex-1 bg-gradient-to-r from-purple-500 to-indigo-500 py-3 rounded-xl text-white text-sm font-bold shadow-lg shadow-purple-500/20">연 59,000원</button>
+                                    <button onClick={handlePurchase} className="flex-1 bg-slate-700 py-3 rounded-xl text-gray-300 text-sm font-bold border border-slate-600">월 9,900원</button>
+                                    <button onClick={handlePurchase} className="flex-1 bg-gradient-to-r from-purple-500 to-indigo-500 py-3 rounded-xl text-white text-sm font-bold shadow-lg shadow-purple-500/20">연 59,000원</button>
                                 </div>
                             </div>
                         </div>
@@ -4168,7 +4388,7 @@ function Store({ onBack }) {
                                 <div className="text-white font-bold">JLPT N3 대비 팩</div>
                                 <div className="text-xs text-gray-400">전용 시나리오 + 필수 단어장</div>
                             </div>
-                            <button className="bg-blue-600/20 text-blue-400 px-4 py-2 rounded-lg text-sm font-bold">12,000원</button>
+                            <button onClick={handlePurchase} className="bg-blue-600/20 text-blue-400 px-4 py-2 rounded-lg text-sm font-bold">12,000원</button>
                         </div>
                         <div className="bg-slate-800/50 rounded-xl p-4 flex items-center gap-4 border border-slate-700">
                             <div className="w-12 h-12 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold text-xl">PDF</div>
@@ -4176,7 +4396,7 @@ function Store({ onBack }) {
                                 <div className="text-white font-bold">학습 자료 추출권</div>
                                 <div className="text-xs text-gray-400">오답 노트 & 학습 자료 PDF 다운로드</div>
                             </div>
-                            <button className="bg-emerald-600/20 text-emerald-400 px-4 py-2 rounded-lg text-sm font-bold">5,500원</button>
+                            <button onClick={handlePurchase} className="bg-emerald-600/20 text-emerald-400 px-4 py-2 rounded-lg text-sm font-bold">5,500원</button>
                         </div>
                     </div>
                 );
@@ -4197,7 +4417,7 @@ function Store({ onBack }) {
                                         <div className="text-white font-bold">{item.name}</div>
                                         <div className="text-xs text-gray-400">{item.desc}</div>
                                     </div>
-                                    <button className="bg-slate-700 px-4 py-2 rounded-lg text-sm font-bold text-pink-400 flex items-center gap-1">
+                                    <button onClick={handlePurchase} className="bg-slate-700 px-4 py-2 rounded-lg text-sm font-bold text-pink-400 flex items-center gap-1">
                                         <Gem className="w-3 h-3" /> {item.price}
                                     </button>
                                 </div>
@@ -4227,7 +4447,7 @@ function Store({ onBack }) {
                                         </div>
                                     </div>
                                     <div className="p-3">
-                                        <button className="w-full bg-slate-700 hover:bg-pink-500 py-2 rounded-lg text-xs font-bold text-white transition-colors">
+                                        <button onClick={handlePurchase} className="w-full bg-slate-700 hover:bg-pink-500 py-2 rounded-lg text-xs font-bold text-white transition-colors">
                                             구매하기
                                         </button>
                                     </div>
