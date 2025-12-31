@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { initializeFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -13,8 +13,19 @@ const firebaseConfig = {
     measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
+// Debug: Check if config is loaded (Do not log full keys for security in public)
+console.log("Firebase Config Status:", {
+    apiKey: firebaseConfig.apiKey ? `Loaded (${firebaseConfig.apiKey.length} chars)` : "Missing",
+    authDomain: firebaseConfig.authDomain ? "Loaded" : "Missing",
+    projectId: firebaseConfig.projectId ? `Loaded: ${firebaseConfig.projectId}` : "Missing",
+});
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+
+// Use initializeFirestore with experimentalForceLongPolling to avoid "client offline" issues
+const db = initializeFirestore(app, {
+    experimentalForceLongPolling: true,
+});
 
 export { db };
